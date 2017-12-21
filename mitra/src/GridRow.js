@@ -21,16 +21,34 @@ class GridRow extends React.Component {
         //provera da li je dozvoljena promena (poziv servera)        
         this.setState({key:event.target.innerHTML});
     }
-    arrayIndex = indexArray(20);
+    arrayIndex = indexArray(27);
     render() {
+        let cellClass = "defaultCell";
+        let cellValue = "";
+        
         let renderValue=this.props.rowValues==undefined?{}:this.props.rowValues;
         return(<tr>
             {this.arrayIndex.map(el=>{
-                return <td className="defaultCell">
-                    <div id={el} suppressContentEditableWarning={true} contentEditable 
-                    onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
-                    {renderValue[el]==undefined?"":renderValue[el]}
-                </div> </td>
+                cellClass = "defaultCell"
+                if(this.props.rowid==0 && el>0)
+                    cellClass = "firstColumnCell";
+                else if(this.props.rowid>0 && el<1){
+                    cellClass = "firstRowCell";
+                }
+                cellValue = renderValue[el]==undefined?"":renderValue[el];
+                if(this.props.rowid==0 || el==0){
+                    return <td className={cellClass}>
+                        <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true}  
+                        onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
+                        {cellValue}
+                    </div> </td>
+                }else{
+                    return <td className={cellClass}>
+                        <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true} contentEditable 
+                        onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
+                        {cellValue}
+                    </div> </td>
+                }
             })}
         </tr>);
     }

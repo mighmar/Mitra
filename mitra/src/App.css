@@ -14,6 +14,20 @@
   min-width: 100px;
 }
 
+.firstRowCell{
+  background-color: rgba(96, 197, 109, 0.603);
+  border:1px solid #aaaaaa;
+  height:30px;
+  min-width: 100px;
+}
+
+.firstColumnCell{
+  background-color: rgb(209, 209, 209);
+  border:1px solid #aaaaaa;
+  height:30px;
+  min-width: 100px;
+}
+
 .gridPanel{
   display: block;
   height: 800px;
