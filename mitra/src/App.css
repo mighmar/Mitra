@@ -1,0 +1,152 @@
+.gridToolbar{
+  height: 600px;
+  border-radius:0px 20px 20px 0px;
+  padding-top: 50px;
+  border: 1px solid #dddddd;
+  background-color: #ededed;
+  margin-top: 110px;
+}
+
+.defaultCell{
+  background-color: white;
+  border:1px solid #aaaaaa;
+  height:30px;
+  min-width: 100px;
+}
+
+.gridPanel{
+  display: block;
+  height: 800px;
+  padding-top: 20px;
+  border: 1px solid #dddddd;
+  background-color: #ededed;
+  margin-top: 20px;
+  margin-left: 10px;
+  overflow-x:scroll;
+  overflow:auto;
+  white-space: nowrap;
+}
+
+.header{
+  background-color:#ededed;
+  height:80px;
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-left:10px;
+  margin-bottom:20px
+}
+
+.btnNew{
+  background-image: url(Images/iconPlus.png);
+  height:60px;
+  width: 60px;
+}
+.btnNew:hover{
+  background-image: url(Images/iconPlusHover.png);
+  height:60px;
+  width: 60px;
+}
+
+.btnExisting{
+  background-image: url(Images/iconExisting.png);
+  height:60px;
+  width: 60px;
+}
+.btnExisting:hover{
+  background-image: url(Images/iconExistingHover.png);
+  height:60px;
+  width: 60px;
+}
+
+.btnGear{
+  background-image: url(Images/iconGear.png);
+  height:60px;
+  width: 60px;
+}
+.btnGear:hover{
+  background-image: url(Images/iconGearHover.png);
+  height:60px;
+  width: 60px;
+}
+
+.btnSplit{
+  background-image: url(Images/iconSplit.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+.btnSplit:hover{
+  background-image: url(Images/iconSplitHover.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+
+.btnMerge{
+  background-image: url(Images/iconMerge.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+.btnMerge:hover{
+  background-image: url(Images/iconMergeHover.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+
+.btnFunction{
+  background-image: url(Images/iconFunction.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+.btnFunction:hover{
+  background-image: url(Images/iconFunctionHover.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+
+.btnPaint{
+  background-image: url(Images/iconPaint.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+.btnPaint:hover{
+  background-image: url(Images/iconPaintHover.png);
+  height:60px;
+  width: 60px;
+  margin:10px;
+}
+
+.textRowContent{
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  background-color: #dddddd;
+}
+
+.recentDiv{
+  height:250px;
+  display:flex;
+  align-items: center;
+  font-size:25px;
+  text-align:center;
+  justify-content: center
+}
+.contentClass{
+  background-color:#ededed;
+  height:250px;
+  padding:10px;
+}
+.headerComponent{
+  margin-top:10px;
+  margin-bottom:10px
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
