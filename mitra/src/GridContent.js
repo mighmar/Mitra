@@ -55,27 +55,29 @@ class GridContent extends React.Component {
     render() {
         if(this.props.page=="Grid"){
             return         (
+                <div>
             <div className="row ">
+                <div className="col-lg-1 col-lg-1 col-xl-1 " >
+                </div>
+                <div className="col-lg-10 col-lg-10 col-xl-10 functionPanel" >
+                    f: <input type="text" className="functionTextbox" name="functionBody" />
+                </div>
+                <div className="col-lg-1 col-lg-1 col-xl-1 " >
+                </div>
+            </div>
+            <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
-                    <div className="row">
-                        <div className="col-lg-1 col-lg-1 col-xl-1" >
+                    <div className="row centerFlex">
                             <div className="btnSplit"></div>
-                        </div>
                     </div>
-                    <div className="row">
-                        <div className="col-lg-1 col-lg-1 col-xl-1" >
+                    <div className="row centerFlex">
                             <div className="btnMerge"></div>
-                        </div>
                     </div>
-                    <div className="row">
-                        <div className="col-lg-1 col-lg-1 col-xl-1" >
+                    <div className="row centerFlex">
                             <div className="btnFunction"></div>
-                        </div>
                     </div>
-                    <div className="row">
-                        <div className="col-lg-1 col-lg-1 col-xl-1" >
+                    <div className="row centerFlex">
                             <div className="btnPaint"></div>
-                        </div>
                     </div>
                 </div>
                 <div className="col-lg-10 col-lg-10 col-xl-10 gridPanel" >
@@ -87,6 +89,7 @@ class GridContent extends React.Component {
                     </table>
                 </div>
                 
+            </div>
             </div>)
       }else{
           return ("");

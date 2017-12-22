@@ -16,7 +16,8 @@ class Header extends React.Component {
             <div className="btnNew"></div>
           </div>
           <div className="col-lg-1 col-lg-1 col-xl-1" >
-            <div className="btnExisting"></div>
+            <div className="btnExisting"
+              onClick={ ()=>{this.props.changePage("Existing")}}></div>
           </div>
           <div className="col-lg-1 col-lg-1 col-xl-1" 
               onClick={ ()=>{this.props.changePage("Configuration")}}>
