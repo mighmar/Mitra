@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip'
 import './App.css';
 import GridRow from './GridRow';
 
@@ -56,6 +57,7 @@ class GridContent extends React.Component {
         if(this.props.page=="Grid"){
             return         (
                 <div>
+                    <ReactTooltip />
             <div className="row ">
                 <div className="col-lg-1 col-lg-1 col-xl-1 " >
                 </div>
@@ -68,16 +70,17 @@ class GridContent extends React.Component {
             <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
                     <div className="row centerFlex">
-                            <div className="btnSplit"></div>
+                            <div className="btnSplit" data-tip="Split cell"></div>
+                            
                     </div>
                     <div className="row centerFlex">
-                            <div className="btnMerge"></div>
+                            <div className="btnMerge" data-tip="Merge cells"></div>
                     </div>
                     <div className="row centerFlex">
-                            <div className="btnFunction"></div>
+                            <div className="btnFunction" data-tip="Functions documentation"></div>
                     </div>
                     <div className="row centerFlex">
-                            <div className="btnPaint"></div>
+                            <div className="btnPaint" data-tip="Style setting"></div>
                     </div>
                 </div>
                 <div className="col-lg-10 col-lg-10 col-xl-10 gridPanel" >
