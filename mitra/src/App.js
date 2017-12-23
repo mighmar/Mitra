@@ -3,6 +3,8 @@ import Header from './Header';
 import DashBoardContent from './DashboardContent';
 import GridContent from './GridContent';
 import ConfigurationContent from './ConfigurationContent';
+import LoadExistingContent from './LoadExistingContent';
+import ReactTooltip from 'react-tooltip'
 
 
 
@@ -30,8 +32,9 @@ class App extends Component {
         <Header page={this.state.Page} changePage={this.changePageFunc}/>
         <DashBoardContent  page={this.state.Page}/>
         <GridContent  page={this.state.Page}/>
+        <LoadExistingContent page={this.state.Page} />
         <ConfigurationContent  page={this.state.Page}/>
-
+        <ReactTooltip />
 
      </div>
     );
