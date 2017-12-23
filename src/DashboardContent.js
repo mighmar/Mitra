@@ -12,7 +12,7 @@ class DashBoardContent extends React.Component {
                 <ContentRow heading="Recent"/>
                 <ContentRow heading="Team log"/>
                 <ContentRow heading="Introduction"
-                    contentText="Mitra is a lightweight, opensource, online spreadsheet manipulation application that enables simultaneous work on the same sheet by multiple users."/>
+                    contentText="Mitra is a lightweight, opensource, online spreadsheet manipulation application that enables simultaneous work on the same sheet by multiple users. It uses React.js and Node.js as main technologies."/>
             </div>);
         
         }else{
