@@ -1,7 +1,8 @@
-var grid = require("./grid");
+var sheets = require("./sheets");
 
 function route(app) {
-    app.use("/grid", grid.router);
+    
+   app.use("/", sheets.getRouter());
 }
 
 exports.route = route;
