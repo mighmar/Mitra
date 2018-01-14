@@ -1,16 +1,23 @@
 var express = require("express"),
     app     = express(),
-    db;
+    bodyParser = require("body-parser");
 
 var routes  = require("./routes"),
     config  = require("./config").server;
     mongodb = require("./mongodb");
 
+app.use(bodyParser.urlencoded({ extended: false }));
 
-mongodb.connect(err => {
-   db = mongodb.getDB();
-   var sheets = db.collection('sheets');
-   routes.route(app);
-   app.listen(config.port, () => {
-   })
+mongodb.connectSheet((err) => {
+   if (err) { 
+	throw new Error(err);
+   }
+   mongodb.connectLog((err) => {
+      if (err) { 
+           throw new Error(err);
+      }
+      routes.route(app);
+      app.listen(config.port, () => {
+      })
+   });
 });

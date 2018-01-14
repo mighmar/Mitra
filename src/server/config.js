@@ -7,7 +7,8 @@ mongodb.username = process.env.MONGODB_USERNAME || "mitra";
 mongodb.password= process.env.MONGODB_PASSWORD || "mitra";
 mongodb.host= process.env.MONGODB_HOST || "localhost";
 mongodb.port = process.env.MONGODB_PORT || 27017;
-mongodb.databaseName = process.env.MONGODB_NAME || "sheetDB";
+mongodb.sheetDatabase = "sheetDB";
+mongodb.logDatabase = "logDB";
 
 exports.server = server;
 exports.mongodb = mongodb;
