@@ -25,7 +25,19 @@ class GridContent extends React.Component {
             11:{0:11},12:{0:12},13:{0:13},14:{0:14},15:{0:15},16:{0:16},17:{0:17},18:{0:18},19:{0:19},
             20:{0:20},21:{0:21},22:{0:22},23:{0:23},24:{0:24},25:{0:25},26:{0:26},27:{0:27},28:{0:28},29:{0:29},
             30:{0:30},31:{0:31},32:{0:32},33:{0:33},34:{0:34},35:{0:35},36:{0:36},37:{0:37},38:{0:38},39:{0:39},40:{0:40}
-        }};
+        }
+        ,
+        userSelection:[
+            {'username':'Filip','col':5,'row':12, 'color':'coral'},
+            {'username':'Marko','col':5,'row':12, 'color':'gold'},
+            {'username':'Stefan','col':5,'row':12, 'color':'green'}
+        ],
+        userStyles:{
+            12:{ 5:{'border-style':'solid', 'border-color':'green', 'border-width':'2px'}},
+            4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
+            15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
+        }
+    };
 
 
     }
@@ -54,7 +66,6 @@ class GridContent extends React.Component {
     rowsArrayIndex = indexArray(40);
 
     render() {
-        if(this.props.page=="Grid"){
             return         (
                 <div>
                     <ReactTooltip />
@@ -86,17 +97,30 @@ class GridContent extends React.Component {
                 <div className="col-lg-10 col-lg-10 col-xl-10 gridPanel" >
                     <table>
                         {this.rowsArrayIndex.map(index=>{
-                        return <GridRow rowid={index} cellChangeHandler={this.handleCellValueChange} rowValues={this.state.grid[index]}/>
+                        return <GridRow rowid={index} cellChangeHandler={this.handleCellValueChange} rowValues={this.state.grid[index]}
+                        rowUserStyles={this.state.userStyles[index]}/>
                     })
                         }
                     </table>
                 </div>
+                <div className="col-lg-1 col-lg-1 col-xl-1 gridUsers" >
+                    {this.state.userSelection.map(el=>{
+                        let usColor = el.color;
+                        let currStyle = {
+                            "width":"5px",
+                            "background-color":usColor
+                        };
+                        return (
+                        <div className="row gridUsersRow">
+                            <div className="col-lg-5 col-lg-5 col-xl-5 gridUsersRowHeight" style={currStyle}> </div> <div className="col-lg-5 col-lg-5 col-xl-5 gridUsersRowHeight"> {el.username}</div>
+                        </div>);
+                    })}
+
+                </div>
                 
             </div>
             </div>)
-      }else{
-          return ("");
-      }
+
          
     }
   }

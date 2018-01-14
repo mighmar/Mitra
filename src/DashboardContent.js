@@ -6,7 +6,7 @@ import './App.css';
 
 class DashBoardContent extends React.Component {
     render() {
-        if(this.props.page=="Dashboard"){
+        //if(this.props.page=="Dashboard"){
             return(
             <div>
                 <ContentRow heading="Recent"/>
@@ -15,9 +15,9 @@ class DashBoardContent extends React.Component {
                     contentText="Mitra is a lightweight, opensource, online spreadsheet manipulation application that enables simultaneous work on the same sheet by multiple users. It uses React.js and Node.js as main technologies."/>
             </div>);
         
-        }else{
-            return ("");
-        }
+        //}else{
+        //    return ("");
+        //}
     }
   }
 

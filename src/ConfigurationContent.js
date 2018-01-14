@@ -6,16 +6,11 @@ import './App.css';
 
 class ConfigurationContent extends React.Component {
     render() {
-        if(this.props.page=="Configuration"){
             return(
             <div>
                 <ContentRow heading="Personal"/>
                 <ContentRow heading="Team"/>
             </div>);
-        
-        }else{
-            return ("");
-        }
     }
   }
 

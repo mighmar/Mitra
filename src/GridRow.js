@@ -25,8 +25,10 @@ class GridRow extends React.Component {
     render() {
         let cellClass = "defaultCell";
         let cellValue = "";
-        
+        let cellUserStyle = {};
+        let renderUserStyle = this.props.rowUserStyles==undefined?{}:this.props.rowUserStyles; //{ 'border-style':'solid', 'border-color':'lightBlue'};
         let renderValue=this.props.rowValues==undefined?{}:this.props.rowValues;
+        
         return(<tr>
             {this.arrayIndex.map(el=>{
                 cellClass = "defaultCell"
@@ -36,15 +38,17 @@ class GridRow extends React.Component {
                     cellClass = "firstRowCell";
                 }
                 cellValue = renderValue[el]==undefined?"":renderValue[el];
-                if(this.props.rowid==0 || el==0){
-                    return <td className={cellClass}>
+                cellUserStyle = renderUserStyle[el]==undefined?{}:renderUserStyle[el];
+
+                if(this.props.rowid==0 || el==0 || Object.keys(cellUserStyle).length!=0){
+                    return <td style={cellUserStyle} className={cellClass}>
                         <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true}  
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
                         {cellValue}
                     </div> </td>
                 }else{
                     return <td className={cellClass}>
-                        <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true} contentEditable 
+                        <div  id={this.props.rowid+"-"+el} suppressContentEditableWarning={true} contentEditable 
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
                         {cellValue}
                     </div> </td>
