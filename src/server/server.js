@@ -6,10 +6,11 @@ var routes  = require("./routes"),
     config  = require("./config").server;
     mongodb = require("./mongodb");
 
-routes.route(app);
 
 mongodb.connect(err => {
+   db = mongodb.getDB();
+   var sheets = db.collection('sheets');
+   routes.route(app);
    app.listen(config.port, () => {
-      db = mongodb.getDB();
    })
 });

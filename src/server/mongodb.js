@@ -1,4 +1,5 @@
-var MongoClient = require( 'mongodb' ).MongoClient;
+var mongodb = require( 'mongodb' );
+var MongoClient = mongodb.MongoClient;
 var util = require('util');
 var config = require('./config').mongodb;
 var _db;
@@ -21,3 +22,4 @@ function getDB () {
 
 exports.connect = connect;
 exports.getDB = getDB;
+exports.OID = mongodb.ObjectID;
