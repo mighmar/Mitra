@@ -1,6 +1,7 @@
 {
   "name": "mitra",
   "version": "0.1.0",
+  "proxy": "http://localhost:3001/",
   "private": true,
   "dependencies": {
     "express": "^4.16.2",
@@ -19,6 +20,5 @@
   },
   "devDependencies": {
     "css-loader": "^0.28.7"
-  },
-  "proxy": "http://localhost:3001"
+  }
 }
