@@ -4,8 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start":"concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "server": "node server.js",
+    "client": "node start-client.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,8 @@
     "express": "^4.16.2",
     "mongodb": "^3.0.1",
     "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.1"
   }
 }
