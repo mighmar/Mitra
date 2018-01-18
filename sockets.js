@@ -15,14 +15,12 @@ io.on('connection', function (socket) {
       if (addedUser) return;
 
       socket.username = username;
-      ++numUsers;
       addedUser = true;
       socket.emit('login');
    });
 
    socket.on('disconnect', function () {
       if (addedUser) {
-         --numUsers;
          socket.broadcast.emit('user left', {
             username: socket.username,
             numUsers: numUsers
@@ -42,7 +40,7 @@ io.on('connection', function (socket) {
    socket.on('open sheet', function (sheetId) {
       sheets.findOne({"_id" : sheetId})
          .then(data => {
-            socket.emit('sheet data', data);
+            socket.emit('sheet data', {sheet: data, users: cursors.sheetId});
          })
          .catch( err => { socket.emit('error'); }
          );
@@ -50,6 +48,9 @@ io.on('connection', function (socket) {
  
       socket.join(sheetId);      
       socket.sheet = sheetId;
+      cursors.sheetId[socket.name].cell = undefined;
+      cursors.sheetId[socket.name].color = "green";
+
       if (io.sockets.adapter.rooms[sheetId].length == 1){
          sheets.findOne({"_id" : sheetId})
             .then( sheet => {
@@ -66,7 +67,7 @@ io.on('connection', function (socket) {
    socket.on('close sheet', function () {
       socket.leave(socket.sheet);      
       socket.sheet = undefined;
-      cursors[sheetId][socket.name] = undefined;
+      delete cursors[sheetId][socket.name];
       io.to(sheetId).emit('user left', {
          username: socket.username
       });
@@ -85,7 +86,7 @@ io.on('connection', function (socket) {
    });
 
    socket.on('select cell', function (cell) {
-      cursors[socket.sheet][socket.name] = cell;
+      cursors[socket.sheet][socket.name].cell = cell;
       io.to(socket.sheet).emit('cell selected', {
          username: socket.username
       });
