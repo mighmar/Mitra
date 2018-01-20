@@ -137,41 +137,4 @@ function connectSockets(app, db) {
    });
 }
 
-<<<<<<< HEAD
 exports.connect = connectSockets;
-=======
-   socket.on('write to cell', function (value, cell) {
-      sheets.update({"_id": socket.sheet}, 
-                   {$set: {["cells."+cell+".content"]: value}})
-         .then( () => {
-            io.to(socket.sheet).emit('cell written to', value, cell);
-         })
-         .catch( err => {
-            if (err) 
-               socket.emit('error'); 
-         }); 
-   });
-
-   socket.on('change cell style', function (style, cell) {
-      sheets.update({"_id": socket.sheet}, 
-                   {$set: {["cells."+cell+".style"]: style}},
-                    err => {
-                       if (err) 
-                          socket.emit('error'); 
-                    }
-      );
-   });
-   socket.on('change cell style', function (style, cell) {
-      sheets.update({"_id": socket.sheet}, 
-                   {$set: {["cells"+cell+".style"]: value}})
-         .then( () => {
-            io.to(socket.sheet).emit('cell changed syle', style, cell);
-         })
-         .catch( err => {
-            if (err) 
-               socket.emit('error'); 
-         }); 
-   });
-      
-
-});
