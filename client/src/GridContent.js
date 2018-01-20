@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip'
 import './App.css';
 import GridRow from './GridRow';
+import StylePanel from './StylePanel';
 
   
 const indexArray = function indexArray(len){
@@ -36,7 +37,8 @@ class GridContent extends React.Component {
             12:{ 5:{'border-style':'solid', 'border-color':'green', 'border-width':'2px'}},
             4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
             15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
-        }
+        },
+        stylePanelVisible:false
     };
 
 
@@ -47,6 +49,17 @@ class GridContent extends React.Component {
         //provera da li je dozvoljena promena (poziv servera) 
         this.setState({i:{j:event.target.innerHTML}});
         //alert(JSON.stringify(this.state, null, 4));
+    }
+
+    toggleStateValue (){
+        //let newValue = !this.state.stylePanelVisible;
+        //provera da li je dozvoljena promena (poziv servera) 
+        this.setState(prevState => ({
+            stylePanelVisible: !prevState.stylePanelVisible
+          }));
+        //alert(JSON.stringify(this.state, null, 4));
+        //alert(this.state.stylePanelVisible);
+
     }
 
     
@@ -78,6 +91,7 @@ class GridContent extends React.Component {
                 <div className="col-lg-1 col-lg-1 col-xl-1 " >
                 </div>
             </div>
+            <StylePanel styleVisible={this.state.stylePanelVisible} />
             <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
                     <div className="row centerFlex">
@@ -91,7 +105,7 @@ class GridContent extends React.Component {
                             <div className="btnFunction" data-tip="Functions documentation"></div>
                     </div>
                     <div className="row centerFlex">
-                            <div className="btnPaint" data-tip="Style setting"></div>
+                            <div className="btnPaint" data-tip="Style setting" onClick={this.toggleStateValue.bind(this)}></div>
                     </div>
                 </div>
                 <div className="col-lg-10 col-lg-10 col-xl-10 gridPanel" >

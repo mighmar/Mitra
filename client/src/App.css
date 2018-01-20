@@ -74,6 +74,16 @@
   font-weight: normal;
 }
 
+.fontDropdown{
+  position: absolute;
+  border-radius: 4px;
+  width: 150px;
+  padding: 7px;
+  background-color:#ededed;
+  border: 2px solid #acacac;
+  z-index: 2;
+}
+
 .header{
   background-color:#ededed;
   height:80px;
@@ -81,6 +91,24 @@
   padding-bottom:10px;
   padding-left:10px;
   margin-bottom:20px
+}
+.stylePanel{
+  background-color:#ededed;
+  height:120px;
+  margin-top:10px;
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-left:10px;
+  margin-bottom:20px
+}
+.stylePanelLabel{
+  padding-top:35px;
+  height:120px;
+}
+
+.stylePanelFontDropdown{
+  padding-top:25px;
+  height:120px;
 }
 
 .btnNew{

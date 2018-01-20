@@ -1,9 +1,9 @@
 var express = require('express');
 var app     = express();
-var server  = require('http').createServer(app);
-var io      = require('socket.io')(server);
+var server  = http.createServer(app);
+var io      = require('socket.io').listen(server);
 var events  = require("events");
-var mongo   = require("./mongodb");
+//var mongo   = require("./mongodb");
 var sheets;
 var cursors;
 
@@ -16,7 +16,7 @@ io.on('connection', function (socket) {
 
       socket.username = username;
       addedUser = true;
-      socket.emit('login');
+      socket.emit('login',"User:"+username+" logged in");
    });
 
    socket.on('disconnect', function () {
@@ -128,3 +128,4 @@ io.on('connection', function (socket) {
 
 });
 
+server.listen(8000);
