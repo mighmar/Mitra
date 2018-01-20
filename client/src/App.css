@@ -16,6 +16,13 @@
   min-width: 100px;
 }
 
+.userCell{
+  background-color: white;
+  border:2px solid #3CB34B;
+  height:30px;
+  min-width: 100px;
+}
+
 .firstRowCell{
   background-color: rgba(96, 197, 109, 0.603);
   border:1px solid #aaaaaa;
