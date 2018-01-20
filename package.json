@@ -24,6 +24,9 @@
     "expr-eval": "^1.2.1",
     "express": "^4.16.2",
     "mongodb": "^2.2.23",
+    "react-color": "^2.13.8",
+    "react-dropdown": "^1.3.6",
+    "react-font-picker": "^1.1.8",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {

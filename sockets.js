@@ -1,6 +1,13 @@
-var http    = require('http');
 var socket  = require('socket.io');
 var events  = require("events");
+var express = require('express');
+var app     = express();
+var server  = http.createServer(app);
+var io      = require('socket.io').listen(server);
+var events  = require("events");
+//var mongo   = require("./mongodb");
+var sheets;
+var cursors;
 
 function connectSockets(app, db) {
    var server = http.createServer(app);
@@ -17,7 +24,7 @@ function connectSockets(app, db) {
    
          socket.username = username;
          addedUser = true;
-         socket.emit('login');
+         socket.emit('login', username);
       });
    
       socket.on('disconnect', function () {
@@ -130,4 +137,41 @@ function connectSockets(app, db) {
    });
 }
 
+<<<<<<< HEAD
 exports.connect = connectSockets;
+=======
+   socket.on('write to cell', function (value, cell) {
+      sheets.update({"_id": socket.sheet}, 
+                   {$set: {["cells."+cell+".content"]: value}})
+         .then( () => {
+            io.to(socket.sheet).emit('cell written to', value, cell);
+         })
+         .catch( err => {
+            if (err) 
+               socket.emit('error'); 
+         }); 
+   });
+
+   socket.on('change cell style', function (style, cell) {
+      sheets.update({"_id": socket.sheet}, 
+                   {$set: {["cells."+cell+".style"]: style}},
+                    err => {
+                       if (err) 
+                          socket.emit('error'); 
+                    }
+      );
+   });
+   socket.on('change cell style', function (style, cell) {
+      sheets.update({"_id": socket.sheet}, 
+                   {$set: {["cells"+cell+".style"]: value}})
+         .then( () => {
+            io.to(socket.sheet).emit('cell changed syle', style, cell);
+         })
+         .catch( err => {
+            if (err) 
+               socket.emit('error'); 
+         }); 
+   });
+      
+
+});
