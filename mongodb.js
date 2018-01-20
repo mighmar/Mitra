@@ -5,21 +5,13 @@ var config = require('./config').mongodb;
 var _db;
 
 var uri = util.format('mongodb://%s:%s@%s:%d/%s',
-    config.username, config.password, config.host, config.port, config.databaseName);
+    config.username, config.password, config.host,
+    config.port, config.databaseName);
+var options = {};
 
-function connect (callback) {
-   MongoClient.connect(uri, {auto_reconnect: true}, (err, db) => {
-      if (err) throw err;
-      else 
-         _db = db;
-      return callback(err);
-   });
+function connectDB () {
+   return MongoClient.connect(uri, options);
 }
 
-function getDB () {
-   return _db;
-}
-
-exports.connect = connect;
-exports.getDB = getDB;
+exports.connect = connectDB;
 exports.OID = mongodb.ObjectID;

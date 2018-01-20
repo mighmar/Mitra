@@ -1,18 +1,24 @@
 var express = require("express"),
-    app     = express(),
-    db;
+    app     = express();
 
-var routes  = require("./routes"),
-    config  = require("./config").server;
+var config  = require("./config").server;
+    mongodb = require("./mongodb");
+    sockets = require("./sockets");
 
 
 app.set("port",process.env.PORT || 3001)
 
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static("client/build"));
-  }
+if (process.env.NODE_ENV === "production") 
+   app.use(express.static("client/build"));
+  
+mongodb.connect().then(db => {
+   app.listen(app.get("port"));
 
-    //mongodb = require("./mongodb");
+   sockets.connect(app, db);
+}).catch(err => {
+   console.error(err);
+});
+
 
 
 /*mongodb.connect(err => {
@@ -23,6 +29,3 @@ if (process.env.NODE_ENV === "production") {
    })
 });*/
 
-app.listen(app.get("port"), () => {
-    console.log(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
-  });

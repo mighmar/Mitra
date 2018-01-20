@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start":"concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && yarn --production=false && yarn run build"
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "node server.js",
     "client": "node start-client.js"
@@ -20,8 +21,9 @@
   },
   "homepage": "https://github.com/mighmar/Mitra#readme",
   "dependencies": {
+    "expr-eval": "^1.2.1",
     "express": "^4.16.2",
-    "mongodb": "^3.0.1",
+    "mongodb": "^2.2.23",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
