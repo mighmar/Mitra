@@ -2,11 +2,7 @@ var socket  = require('socket.io');
 var events  = require("events");
 var express = require('express');
 var app     = express();
-var server  = http.createServer(app);
-var io      = require('socket.io').listen(server);
 var events  = require("events");
-//var mongo   = require("./mongodb");
-var sheets;
 var cursors;
 
 function connectSockets(app, db) {
