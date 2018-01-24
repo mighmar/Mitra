@@ -1,6 +1,7 @@
-var socket  = require('socket.io');
-var events  = require('events');
-var http    = require('http');
+var socket   = require('socket.io');
+var events   = require('events');
+var http     = require('http');
+var listener = require("./listener");
 
 function connectSockets(app, db) {
    var server = http.createServer(app);
@@ -69,7 +70,9 @@ function connectSockets(app, db) {
          if (io.sockets.adapter.rooms[sheetId].length == 1){
             sheets.findOne({"_id" : sheetId})
                .then( sheet => {
+                  listeners[sheetId] = [];
                   //TODO
+                  
                })
                .catch( err => {});
          }

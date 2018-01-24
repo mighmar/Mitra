@@ -26,3 +26,5 @@ function listener(sheetId, cell, formula, args) {
          .catch(err => {}); 
    }
 }
+
+exports.listener = listener;
