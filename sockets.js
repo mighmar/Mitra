@@ -1,5 +1,6 @@
 var socket  = require('socket.io');
-var events  = require("events");
+var events  = require('events');
+var http    = require('http');
 
 function connectSockets(app, db) {
    var server = http.createServer(app);
@@ -16,6 +17,9 @@ function connectSockets(app, db) {
                       "maroon", "coral"];
       const nColors = colors.length;
       var colorPointer = {};
+
+
+      var listeners = {};
    
       var addedUser = false;
    
