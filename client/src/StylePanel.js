@@ -43,7 +43,7 @@ class StylePanel extends React.Component {
           Font:
           </div>
           <div className="col-lg-2 col-lg-2 col-xl-2 stylePanelFontDropdown">
-          <Dropdown className='fontDropdown' options={safeFonts}  value={defaultFont} placeholder="Select a font style" />
+          <Dropdown className='fontDropdown' onChange={this.props.handleFontChange} options={safeFonts}  value={defaultFont} placeholder="Select a font style" />
           </div>
           </div>
           </div>

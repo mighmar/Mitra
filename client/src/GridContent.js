@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip'
 import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
-
+import update from 'react-addons-update';
   
 const indexArray = function indexArray(len){
     let array = new Array(len);
@@ -49,15 +49,42 @@ class GridContent extends React.Component {
         stylePanelVisible:false
     };
 
+    for (let i = 0; i < 40; i++) {
+        for(let j = 0; j<27; j++){
+            if(this.state.gridStyles[i]===undefined)
+                this.state.gridStyles[i]={};
+            if(this.state.gridStyles[i][j]===undefined)
+                this.state.gridStyles[i][j]={};
+
+            if(this.state.grid[i]===undefined)
+                this.state.grid[i]={};
+            if(this.state.grid[i][j]===undefined)
+                this.state.grid[i][j]="";
+        }
+        
+    }
 
     }
 
     handleCellValueChange= (i,j,event)=>{
-        //let key = event.target.id;
-        //provera da li je dozvoljena promena (poziv servera) 
-        this.setState({grid:{i:{j:event.target.innerHTML}}});
-        
-        //alert(JSON.stringify(this.state, null, 4));
+        let value = event.target.firstChild.nodeValue;
+        if(i!==undefined && j!==undefined){
+            this.setState((previousState) => {
+                //console.log(i+" "+j+" "+value);
+            return update(previousState, {
+                grid:
+                { 
+                    [i]: {
+                        [j]:{$set:[value]}
+                        }
+                    }
+                }
+            )
+        }
+            );
+
+            //provera da li je dozvoljena promena (poziv servera) 
+        }
     }
 
     handleFocusChange= (i,j,event)=>{
@@ -71,32 +98,45 @@ class GridContent extends React.Component {
         });
         //alert(JSON.stringify(this.state, null, 4));
     }
-    handleFontChange= (i,j,event)=>{
-        let key = event.target.id;
-        //provera da li je dozvoljena promena (poziv servera) 
-        this.setState({
-                        userRowCol:{
-                            row:i,
-                            col:j
+    handleFontChange= (font)=>{
+        let i=this.state.userRowCol.row;
+        let j= this.state.userRowCol.col;
+        if(i!==undefined && j!==undefined){
+            this.setState((previousState) => {
+            return update(previousState, {
+                gridStyles:
+                { 
+                    [i]: {
+                        [j]:{"font-family": {$set:[font["value"]]}
                         }
-        });
-        //alert(JSON.stringify(this.state, null, 4));
+                    }
+                }
+            })
+        }
+            );
+
+            //provera da li je dozvoljena promena (poziv servera) 
+        }
     }
     handleColorChange= (color)=>{
         let i=this.state.userRowCol.row;
         let j= this.state.userRowCol.col;
-        let newStyle=this.state.gridStyles;
-        newStyle[i]=newStyle[i]==undefined?{}:newStyle[i];
-        if(newStyle[i][j]==undefined){
-            newStyle[i][j]={};
-        }
-        newStyle[i][j]["background-color"]=color.hex;
         if(i!==undefined && j!==undefined){
-            this.setState({gridStyles:newStyle});
+            this.setState((previousState) => {
+            return update(previousState, {
+                gridStyles:
+                { 
+                    [i]: {
+                        [j]:{"background-color": {$set:[color.hex]}
+                        }
+                    }
+                }
+            })
+        }
+            );
 
             //provera da li je dozvoljena promena (poziv servera) 
         }
-        //alert(JSON.stringify(this.state, null, 4));
     }
 
     toggleStateValue (){
@@ -139,7 +179,7 @@ class GridContent extends React.Component {
                 <div className="col-lg-1 col-lg-1 col-xl-1 " >
                 </div>
             </div>
-            <StylePanel styleVisible={this.state.stylePanelVisible} handleColorChange={this.handleColorChange.bind(this)} />
+            <StylePanel styleVisible={this.state.stylePanelVisible} handleColorChange={this.handleColorChange.bind(this)} handleFontChange={this.handleFontChange.bind(this)} />
             <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
                     <div className="row centerFlex">
