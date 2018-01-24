@@ -2,9 +2,7 @@ var socket  = require('socket.io');
 var events  = require('events');
 var http    = require('http');
 
-function connectSockets(app, db) {
-   var server = http.createServer(app);
-   var io     = socket(server); 
+function connectSockets(app, db,io) {
    io.on('connection', function (socket) {
       var sheets = db.collection('sheets');
       var cursors;
@@ -17,7 +15,7 @@ function connectSockets(app, db) {
                       "maroon", "coral"];
       const nColors = colors.length;
       var colorPointer = {};
-
+      console.log('Connected');
 
       var listeners = {};
    
@@ -25,7 +23,7 @@ function connectSockets(app, db) {
    
       socket.on('add user', function (username) {
          if (addedUser) return;
-   
+         console.log('User added');
          socket.username = username;
          addedUser = true;
          socket.emit('login', username);

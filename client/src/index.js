@@ -9,10 +9,10 @@ import Header from './Header';
 import GridContent from './GridContent';
 import LoadExistingContent from './LoadExistingContent';
 import ConfigurationContent from './ConfigurationContent';
-
+import {addUser} from './api';
 
 //ReactDOM.render(<App />, document.getElementById('root'));
-
+addUser();
 ReactDOM.render(
 <BrowserRouter >
     <div>
