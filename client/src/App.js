@@ -13,12 +13,15 @@ import iconExisting from './Images/iconExisting.png';
 import iconGear from './Images/iconGear.png';
 
 import './App.css';
+import { addUser } from './api';
+
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state={Page:"Dashboard"}
     this.changePageFunc=this.changePageFunc.bind(this);
+    addUser();
   }
 
   changePageFunc(pageName){

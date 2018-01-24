@@ -1,9 +1,13 @@
 var express = require("express"),
     app     = express();
+    var cors = require('cors');
+
+    app.use(cors());
 
 var config  = require("./config").server;
     mongodb = require("./mongodb");
-    sockets = require("./sockets");
+    socketsLib = require("./sockets");
+
 
 
 app.set("port",process.env.PORT || 3001)
@@ -11,10 +15,14 @@ app.set("port",process.env.PORT || 3001)
 if (process.env.NODE_ENV === "production") 
    app.use(express.static("client/build"));
   
-mongodb.connect().then(db => {
-   app.listen(app.get("port"));
+var server = app.listen(3001);
+var io  = require('socket.io').listen(server);
 
-   sockets.connect(app, db);
+
+mongodb.connect().then(db => {
+
+    socketsLib.connect(app,db,io);
+   //sockets.connect(app, db,io);
 }).catch(err => {
    console.error(err);
 });

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/mighmar/Mitra#readme",
   "dependencies": {
+    "cors": "^2.8.4",
     "expr-eval": "^1.2.1",
     "express": "^4.16.2",
     "mongodb": "^2.2.23",
