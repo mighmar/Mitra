@@ -1,17 +1,21 @@
 var socket  = require('socket.io');
 var events  = require("events");
-var express = require('express');
-var app     = express();
-var events  = require("events");
-var cursors;
 
 function connectSockets(app, db) {
    var server = http.createServer(app);
    var io     = socket(server); 
-
    io.on('connection', function (socket) {
       var sheets = db.collection('sheets');
       var cursors;
+      const colors = ["red", "green", "blue",
+                      "yellow", "black", "purple",
+                      "mint", "orange", "cyan",
+                      "brown", "teal", "black",
+                      "lavander", "lime", "navy",
+                      "olive", "pink", "beige",
+                      "maroon", "coral"];
+      const nColors = colors.length;
+      var colorPointer = {};
    
       var addedUser = false;
    
@@ -35,7 +39,8 @@ function connectSockets(app, db) {
       socket.on('create sheet', function (sheetName) {
          sheets.insert({name: sheetname})
             .then( data => {
-                //TODO
+               var id = data.insertedIds[0].toString();
+               socket.emit('new sheet', id);
             })
             .catch( err => {
             }); 
@@ -53,7 +58,9 @@ function connectSockets(app, db) {
          socket.join(sheetId);      
          socket.sheet = sheetId;
          cursors.sheetId[socket.name].cell = undefined;
-         cursors.sheetId[socket.name].color = "green";
+         colorPointer[sheetId]++;
+         colorPointer[sheetId] %= nColors;
+         cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
    
          if (io.sockets.adapter.rooms[sheetId].length == 1){
             sheets.findOne({"_id" : sheetId})
@@ -64,7 +71,8 @@ function connectSockets(app, db) {
          }
          else
             io.to(sheetId).emit('user joined', {
-               username: socket.username
+               username: socket.username,
+               cursor: cursors.sheetId[socket.name]
             });
       }); 
    
