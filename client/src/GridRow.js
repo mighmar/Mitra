@@ -39,9 +39,7 @@ class GridRow extends React.Component {
                     cellClass = "firstColumnCell";
                 else if(this.props.rowid>0 && el<1){
                     cellClass = "firstRowCell";
-                }else if(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col){
-                    cellClass = "userCell";
-                }
+                } 
                 cellValue = renderValue[el]==undefined?"":renderValue[el];
                 cellUserStyle = renderUserStyle[el]==undefined?{}:renderUserStyle[el];
 
@@ -55,7 +53,13 @@ class GridRow extends React.Component {
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
                         {cellValue}
                     </div> </td>
-                } else{
+                }else if(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col){
+                    return <td className="userCell">
+                    <div  style={cellStyleFinal} id={this.props.rowid+"-"+el} suppressContentEditableWarning={true} contentEditable 
+                    onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}
+                    onFocus={(e)=>{this.props.focusChangeHandler(this.props.rowid,el,e)}}>
+                </div> </td>
+                }else{
                     return <td className={cellClass}>
                         <div  style={cellStyleFinal} id={this.props.rowid+"-"+el} suppressContentEditableWarning={true} contentEditable 
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}
