@@ -1,9 +1,10 @@
-var socket   = require('socket.io');
-var events   = require('events');
-var http     = require('http');
+var events   = require("events");
+var socketIo = require("socket.io");
 var listener = require("./listener");
 
-function connectSockets(app, db,io) {
+function connectSockets(server, db) {
+   var io = socketIo(server);
+
    io.on('connection', function (socket) {
       var sheets = db.collection('sheets');
       var cursors;

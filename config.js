@@ -1,7 +1,7 @@
 var mongodb = {};
 var server = {};
 
-server.port = process.env.WEB_PORT || 8080;
+server.port = process.env.PORT || 3001;
 
 mongodb.username = process.env.MONGODB_USERNAME || "mitra";
 mongodb.password= process.env.MONGODB_PASSWORD || "mitra";
