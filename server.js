@@ -1,6 +1,6 @@
 var express = require("express"),
     app     = express(),
-    cors    = require("cors"),
+    cors    = require("cors");
 
 
 var config  = require("./config").server;

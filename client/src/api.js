@@ -16,4 +16,17 @@ function createSheet(sheetIdCall){
   socket.emit("create sheet",newSheet);
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
-export { addUser,createSheet };
+
+function openSheet(sheetId){
+  socket.emit("open sheet",sheetId);
+  socket.on("sheet data",sheetData=> alert(JSON.stringify(sheetData)));
+}
+
+function closeSheet(sheetIdCall){
+  let newSheet={
+    "name":"New spreadsheet"
+  };
+  socket.emit("create sheet",newSheet);
+  socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
+}
+export { addUser,createSheet,openSheet };

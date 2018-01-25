@@ -4,7 +4,7 @@ import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
-import {createSheet} from './api';
+import {createSheet,openSheet} from './api';
 
 const indexArray = function indexArray(len){
     let array = new Array(len);
@@ -76,7 +76,14 @@ class GridContent extends React.Component {
     }
 
     componentDidMount(){
-        createSheet(this.setSheetId.bind(this));
+
+        if(this.props.match ===undefined ||
+            this.props.match.params===undefined ||
+            this.props.match.params.sheetId===undefined)
+            createSheet(this.setSheetId.bind(this));
+        else{
+            openSheet(this.props.match.params.sheetId);
+        }
     }
 
     handleCellValueChange= (i,j,event)=>{

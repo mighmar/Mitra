@@ -19,6 +19,7 @@ ReactDOM.render(
         <Route path="/" component={Header}/>
         <Route exact={true} path="/" component={DashboardContent}/>
         <Route path="/grid/" component={GridContent}/>
+        <Route path="/grid/:sheetId" component={GridContent}/>
         <Route path="/existing" component={LoadExistingContent}/>
         <Route path="/configuration" component={ConfigurationContent}/>
     </div>
