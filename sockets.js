@@ -32,6 +32,7 @@ function connectSockets(server, db) {
       });
    
       socket.on('disconnect', function () {
+         var numUsers=0;
          if (addedUser) {
             socket.broadcast.emit('user left', {
                username: socket.username,
@@ -41,6 +42,7 @@ function connectSockets(server, db) {
       });
    
       socket.on('create sheet', function (sheetName) {
+            console.log(sheetName);
          sheets.insert({name: sheetName})
             .then( data => {
                var id = data.insertedIds[0].toString();
