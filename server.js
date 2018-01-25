@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === "production")
 var server = app.listen(app.get("port")); 
 
 mongodb.connect().then(db => {
-   sockets.connect(server,db);
+   sockets.connect(server, db, mongodb.OID);
 
 }).catch(err => {
    console.error(err);
