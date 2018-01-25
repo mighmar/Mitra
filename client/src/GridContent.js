@@ -4,7 +4,8 @@ import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
-  
+import {createSheet} from './api';
+
 const indexArray = function indexArray(len){
     let array = new Array(len);
     for (let i = 0; i < len; i++) {
@@ -12,6 +13,8 @@ const indexArray = function indexArray(len){
     }
     return array;
 }
+
+
 
 class GridContent extends React.Component {
     constructor(props){
@@ -49,6 +52,8 @@ class GridContent extends React.Component {
         stylePanelVisible:false
     };
 
+
+
     for (let i = 0; i < 40; i++) {
         for(let j = 0; j<27; j++){
             if(this.state.gridStyles[i]===undefined)
@@ -64,6 +69,14 @@ class GridContent extends React.Component {
         
     }
 
+    }
+
+    setSheetId(sheetId){
+        this.setState({"spreadSheetId":[sheetId]});
+    }
+
+    componentDidMount(){
+        createSheet(this.setSheetId.bind(this));
     }
 
     handleCellValueChange= (i,j,event)=>{
