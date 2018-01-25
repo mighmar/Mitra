@@ -46,6 +46,7 @@ function connectSockets(server, db) {
                var id = data.insertedIds[0].toString();
                socket.emit('new sheet', id);
                colorPointer[id] = 0;
+               cursors[id] = {};
             })
             .catch( err => {
             }); 
@@ -55,32 +56,32 @@ function connectSockets(server, db) {
          sheets.findOne({"_id" : sheetId})
             .then(data => {
                socket.emit('sheet data', {sheet: data, users: cursors.sheetId});
-            })
-            .catch( err => { socket.emit('error'); }
-            );
+               socket.join(sheetId);      
+               socket.sheet = sheetId;
+               cursors[sheetId][socket.name].cell = undefined;
+               colorPointer[sheetId]++;
+               colorPointer[sheetId] %= nColors;
+               cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
+   
+               if (io.sockets.adapter.rooms[sheetId].length == 1){
+                  sheets.findOne({"_id" : sheetId})
+                     .then( sheet => {
+                        listeners[sheetId] = [];
+                        //TODO
+                        
+                     })
+                     .catch( err => {});
+               }
+               else
+                  io.to(sheetId).emit('user joined', {
+                     username: socket.username,
+                     cursor: cursors.sheetId[socket.name]
+                  });
+                  })
+                  .catch( err => { socket.emit('error'); }
+                  );
          
     
-         socket.join(sheetId);      
-         socket.sheet = sheetId;
-         cursors[sheetId][socket.name].cell = undefined;
-         colorPointer[sheetId]++;
-         colorPointer[sheetId] %= nColors;
-         cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
-   
-         if (io.sockets.adapter.rooms[sheetId].length == 1){
-            sheets.findOne({"_id" : sheetId})
-               .then( sheet => {
-                  listeners[sheetId] = [];
-                  //TODO
-                  
-               })
-               .catch( err => {});
-         }
-         else
-            io.to(sheetId).emit('user joined', {
-               username: socket.username,
-               cursor: cursors.sheetId[socket.name]
-            });
       }); 
    
       socket.on('close sheet', function () {
