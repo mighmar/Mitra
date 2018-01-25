@@ -1,13 +1,11 @@
 var express = require("express"),
     app     = express(),
-    cors    = require("cors"),
+    cors    = require("cors");
 
 
 var config  = require("./config").server;
     mongodb = require("./mongodb");
-    sockets = require("./sockets");
-
-
+    sockets = require("./sockets"); 
 
 app.use(cors());
 app.set("port", config.port)

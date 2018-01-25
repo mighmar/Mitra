@@ -41,7 +41,7 @@ function connectSockets(server, db) {
       });
    
       socket.on('create sheet', function (sheetName) {
-         sheets.insert({name: sheetname})
+         sheets.insert({name: sheetName})
             .then( data => {
                var id = data.insertedIds[0].toString();
                socket.emit('new sheet', id);
