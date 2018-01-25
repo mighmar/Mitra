@@ -6,7 +6,7 @@ var express = require("express"),
 var config  = require("./config").server;
     mongodb = require("./mongodb");
     sockets = require("./sockets");
-
+ 
 
 
 app.use(cors());
