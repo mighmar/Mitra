@@ -140,6 +140,17 @@
   width: 60px;
 }
 
+.btnExit{
+  background-image: url(Images/iconExit.png);
+  height:60px;
+  width: 60px;
+}
+.btnExit:hover{
+  background-image: url(Images/iconExitHover.png);
+  height:60px;
+  width: 60px;
+}
+
 .btnGear{
   background-image: url(Images/iconGear.png);
   height:60px;
@@ -238,4 +249,28 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.welcomeDiv {
+  position:fixed;
+  top: 30%;
+  left: 50%;
+  width:600px;
+  height:700px;
+  margin-top: -300px; /*set to a negative number 1/2 of your height*/
+  margin-left: -300px; /*set to a negative number 1/2 of your width*/
+}
+
+.welcomeLogo{
+  width:600px;
+  height:600px;
+  background-image: url(Images/welcomeScreen.png);
+}
+
+.welcomeButton{
+  top: 30%;
+  width:600px;
+  height:60px;
+  background-color: rgb(204, 204, 204);
+  font-size: 14pt;
 }

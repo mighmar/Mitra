@@ -34,8 +34,7 @@ function connectSockets(server, db) {
       socket.on('disconnect', function () {
          if (addedUser) {
             socket.broadcast.emit('user left', {
-               username: socket.username,
-               numUsers: numUsers
+               username: socket.username
             });   
          }
       });
