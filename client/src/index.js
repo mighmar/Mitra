@@ -27,7 +27,7 @@ ReactDOM.render(
     <div>
     <Security issuer='https://dev-868306.oktapreview.com/oauth2/default'
                   client_id='0oadrm1qnzouySu6O0h7'
-                  redirect_uri={window.location.origin + '/implicit/callback'}
+                  redirect_uri={'https://sheltered-mountain-90809.herokuapp.com/implicit/callback'}
                   onAuthRequired={onAuthRequired} >
         <Route path="/" component={Header}/>
         <Route path="/" exact={true} component={Home}/>
