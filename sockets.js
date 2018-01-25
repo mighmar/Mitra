@@ -53,7 +53,8 @@ function connectSockets(server, db) {
       });
    
       socket.on('open sheet', function (sheetId) {
-         sheets.findOne({"_id" : sheetId})
+         var id = new OID(sheetId);
+         sheets.findOne({"_id" : id})
             .then(sheet => {
                socket.join(sheetId);      
                socket.sheet = sheetId;
@@ -106,6 +107,7 @@ function connectSockets(server, db) {
       }); 
    
       socket.on('change sheet style', function (style) {
+         
          sheets.update({"_id": socket.sheet},
                       {$set: {"style": style}})
             .then(() => {
@@ -125,6 +127,7 @@ function connectSockets(server, db) {
       });
    
       socket.on('write to cell', function (value, cell) {
+         var id = new OID(socket.sheet);
          sheets.update({"_id": socket.sheet}, 
                       {$set: {["cells."+cell+".content"]: value}})
             .then( () => {
@@ -138,7 +141,8 @@ function connectSockets(server, db) {
       });
    
       socket.on('change cell style', function (style, cell) {
-         sheets.update({"_id": socket.sheet}, 
+         var id = new OID(socket.sheet);
+         sheets.update({"_id": id}, 
                       {$set: {["cells."+cell+".style"]: style}},
                        err => {
                           if (err) 
@@ -147,7 +151,8 @@ function connectSockets(server, db) {
          );
       });
       socket.on('change cell style', function (style, cell) {
-         sheets.update({"_id": socket.sheet}, 
+         var id = new OID(socket.sheet);
+         sheets.update({"_id": id}, 
                       {$set: {["cells"+cell+".style"]: value}})
             .then( () => {
                io.to(socket.sheet).emit('cell changed syle', style, cell);

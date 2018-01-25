@@ -1,5 +1,4 @@
-var express = require("express"),
-    app     = express(),
+var app     = require("express")(),
     cors    = require("cors");
 
 
