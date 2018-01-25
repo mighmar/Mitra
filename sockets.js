@@ -15,11 +15,11 @@ function connectSockets(server, db) {
                    "maroon", "coral"];
    const nColors = colors.length;
    var colorPointer = {};
+   var listeners = {};
 
    io.on('connection', function (socket) {
       console.log('Connected');
 
-      var listeners = {};
    
       var addedUser = false;
    
@@ -32,7 +32,6 @@ function connectSockets(server, db) {
       });
    
       socket.on('disconnect', function () {
-         var numUsers=0;
          if (addedUser) {
             socket.broadcast.emit('user left', {
                username: socket.username,
@@ -42,7 +41,6 @@ function connectSockets(server, db) {
       });
    
       socket.on('create sheet', function (sheetName) {
-            console.log(sheetName);
          sheets.insert({name: sheetName})
             .then( data => {
                var id = data.insertedIds[0].toString();
@@ -64,7 +62,7 @@ function connectSockets(server, db) {
     
          socket.join(sheetId);      
          socket.sheet = sheetId;
-         cursors.sheetId[socket.name].cell = undefined;
+         cursors[sheetId][socket.name].cell = undefined;
          colorPointer[sheetId]++;
          colorPointer[sheetId] %= nColors;
          cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
