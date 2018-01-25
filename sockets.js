@@ -4,19 +4,19 @@ var listener = require("./listener");
 
 function connectSockets(server, db) {
    var io = socketIo(server);
+   var sheets = db.collection('sheets');
+   var cursors;
+   const colors = ["red", "green", "blue",
+                   "yellow", "black", "purple",
+                   "mint", "orange", "cyan",
+                   "brown", "teal", "black",
+                   "lavander", "lime", "navy",
+                   "olive", "pink", "beige",
+                   "maroon", "coral"];
+   const nColors = colors.length;
+   var colorPointer = {};
 
    io.on('connection', function (socket) {
-      var sheets = db.collection('sheets');
-      var cursors;
-      const colors = ["red", "green", "blue",
-                      "yellow", "black", "purple",
-                      "mint", "orange", "cyan",
-                      "brown", "teal", "black",
-                      "lavander", "lime", "navy",
-                      "olive", "pink", "beige",
-                      "maroon", "coral"];
-      const nColors = colors.length;
-      var colorPointer = {};
       console.log('Connected');
 
       var listeners = {};
@@ -45,6 +45,7 @@ function connectSockets(server, db) {
             .then( data => {
                var id = data.insertedIds[0].toString();
                socket.emit('new sheet', id);
+               colorPointer[id] = 0;
             })
             .catch( err => {
             }); 
