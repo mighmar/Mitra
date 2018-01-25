@@ -21,6 +21,7 @@ function onAuthRequired({history}) {
 
 //ReactDOM.render(<App />, document.getElementById('root'));
 addUser();
+alert(window.location.origin + '/implicit/callback');
 ReactDOM.render(
 <BrowserRouter >
     <div>
