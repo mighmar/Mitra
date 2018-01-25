@@ -1,6 +1,6 @@
 var events   = require("events");
 var socketIo = require("socket.io");
-var listener = require("./listener");
+var listener = require("./listener").listener;
 
 function connectSockets(server, db) {
    var io = socketIo(server);
@@ -15,7 +15,7 @@ function connectSockets(server, db) {
                    "maroon", "coral"];
    const nColors = colors.length;
    var colorPointer = {};
-   var listeners = {};
+   var emitters = {};
 
    io.on('connection', function (socket) {
       console.log('Connected');
@@ -47,6 +47,7 @@ function connectSockets(server, db) {
                socket.emit('new sheet', id);
                colorPointer[id] = 0;
                cursors[id] = {};
+               emitters[id] = {};
             })
             .catch( err => {
             }); 
@@ -54,23 +55,29 @@ function connectSockets(server, db) {
    
       socket.on('open sheet', function (sheetId) {
          sheets.findOne({"_id" : sheetId})
-            .then(data => {
-               socket.emit('sheet data', {sheet: data, users: cursors.sheetId});
+            .then(sheet => {
                socket.join(sheetId);      
                socket.sheet = sheetId;
                cursors[sheetId][socket.name].cell = undefined;
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
                cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
+               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
    
                if (io.sockets.adapter.rooms[sheetId].length == 1){
-                  sheets.findOne({"_id" : sheetId})
-                     .then( sheet => {
-                        listeners[sheetId] = [];
-                        //TODO
-                        
-                     })
-                     .catch( err => {});
+                        emitters[sheetId] = new events.EventEmitter();
+                        for (let f in sheet.functions){
+                           var fun = sheet.functions[f],
+                           target  = fun.target, 
+                           formula = fun.formula, 
+                           args    = fun.args; 
+
+                           for (let a in args){
+                              emitters[sheetId].on(args[a],
+                                       listener(sheetId, target, formula, args));
+                           } 
+
+                        }
                }
                else
                   io.to(sheetId).emit('user joined', {
@@ -88,9 +95,15 @@ function connectSockets(server, db) {
          socket.leave(socket.sheet);      
          socket.sheet = undefined;
          delete cursors[sheetId][socket.name];
-         io.to(sheetId).emit('user left', {
-            username: socket.username
-         });
+         if (io.sockets.adapter.rooms[sheetId].length == 1){
+            delete cursors[sheetId];
+            delete emitters[sheetId];
+            delete colorPointer[sheetId];
+         }
+         else 
+            io.to(sheetId).emit('user left', {
+               username: socket.username
+            }); 
       }); 
    
       socket.on('change sheet style', function (style) {
@@ -117,6 +130,7 @@ function connectSockets(server, db) {
                       {$set: {["cells."+cell+".content"]: value}})
             .then( () => {
                io.to(socket.sheet).emit('cell written to', value, cell);
+               emitters[socket.sheet].emit(cell, sheets, io);
             })
             .catch( err => {
                if (err) 
