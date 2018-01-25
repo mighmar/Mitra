@@ -5,7 +5,7 @@ var listener = require("./listener");
 function connectSockets(server, db) {
    var io = socketIo(server);
    var sheets = db.collection('sheets');
-   var cursors;
+   var cursors = {};
    const colors = ["red", "green", "blue",
                    "yellow", "black", "purple",
                    "mint", "orange", "cyan",
