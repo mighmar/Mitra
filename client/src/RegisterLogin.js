@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import './RegisterLogin.css';
-import App from './App'
+///import App from './App'
 
 export default class RegisterLogin extends React.Component {
   constructor(props){
@@ -108,7 +108,7 @@ export default class RegisterLogin extends React.Component {
 </div>
     );
 	else
-		return (<App />);
+		return ("");
   }
 }
 
