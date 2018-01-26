@@ -5,6 +5,8 @@ import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
 import {createSheet,openSheet} from './api';
+import { withAuth } from '@okta/okta-react';
+
 
 const indexArray = function indexArray(len){
     let array = new Array(len);
@@ -16,9 +18,10 @@ const indexArray = function indexArray(len){
 
 
 
-class GridContent extends React.Component {
+export default withAuth (class GridContent extends React.Component {
     constructor(props){
         super(props);
+        
         this.state={
             userRowCol:{
                 row:6,
@@ -49,7 +52,7 @@ class GridContent extends React.Component {
             4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
             15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
         },
-        stylePanelVisible:false
+        stylePanelVisible:false,
     };
 
 
@@ -75,8 +78,15 @@ class GridContent extends React.Component {
         this.setState({"spreadSheetId":[sheetId]});
     }
 
-    componentDidMount(){
 
+    async componentDidMount(){
+        let username="";
+        try{
+            username= JSON.stringify((await this.props.auth.getUser())["email"]);
+            alert(username);
+        }catch(err){
+
+        }
         if(this.props.match ===undefined ||
             this.props.match.params===undefined ||
             this.props.match.params.sheetId===undefined)
@@ -245,7 +255,6 @@ class GridContent extends React.Component {
 
          
     }
-  }
+  });
 
-  export default GridContent;
   
