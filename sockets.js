@@ -48,7 +48,6 @@ function connectSockets(server, db, OID) {
             io.to(sheetId).emit('user left', {
                username: socket.username
             }); 
-         }
       });
    
       socket.on('create sheet', function (sheetName) {
