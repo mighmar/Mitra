@@ -67,7 +67,8 @@ function connectSockets(server, db, OID) {
    
       socket.on('open sheet', data => {
          var sheetId = data.sheetId, name = data.name;
-         console.log("Opening sheet: ", sheetId, ", User: ", name);
+         console.log("Opening data: ", data, " (Sheet: ", sheetId, ", User: ", name, ")");
+
          var id = new OID(sheetId);
 
          sheets.findOne({"_id" : id})
@@ -75,7 +76,6 @@ function connectSockets(server, db, OID) {
                socket.name = name;
                socket.join(sheetId);      
                socket.sheet = sheetId;
-               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                   cursors[sheetId] = {};
                   emitters[sheetId] = new events.EventEmitter();
@@ -91,6 +91,7 @@ function connectSockets(server, db, OID) {
                      } 
                   }
                }
+               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
                cursors[sheetId][socket.name].cell = undefined;
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
