@@ -83,17 +83,17 @@ export default withAuth (class GridContent extends React.Component {
         let username="";
         try{
             username= JSON.stringify((await this.props.auth.getUser())["email"]);
-            alert(username);
+            if(this.props.match ===undefined ||
+                this.props.match.params===undefined ||
+                this.props.match.params.sheetId===undefined)
+                createSheet(this.setSheetId.bind(this));
+            else{
+                openSheet(this.props.match.params.sheetId);
+            }
         }catch(err){
 
         }
-        if(this.props.match ===undefined ||
-            this.props.match.params===undefined ||
-            this.props.match.params.sheetId===undefined)
-            createSheet(this.setSheetId.bind(this));
-        else{
-            openSheet(this.props.match.params.sheetId);
-        }
+        
     }
 
     handleCellValueChange= (i,j,event)=>{
