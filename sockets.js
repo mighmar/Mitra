@@ -66,6 +66,8 @@ function connectSockets(server, db, OID) {
    
       socket.on('open sheet', function (sheetId, username) {
          var id = new OID(sheetId);
+
+         console.log("open sheet attempt");
          sheets.findOne({"_id" : id})
             .then(sheet => {
                socket.username = username;
