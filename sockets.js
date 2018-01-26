@@ -34,15 +34,16 @@ function connectSockets(server, db, OID) {
       */
    
       socket.on('disconnect', function () {
+         console.log("Disconnecting");
          io.to(socket.sheet).emit('user left', { 
             username: socket.username
          });   
 
-         delete cursors[sheetId][socket.name];
+         delete cursors[socket.sheet][socket.name];
          if (io.sockets.adapter.rooms[sheetId].length == 1){
-            delete cursors[sheetId];
-            delete emitters[sheetId];
-            delete colorPointer[sheetId];
+            delete cursors[socket.sheet];
+            delete emitters[socket.sheet];
+            delete colorPointer[socket.sheet];
          }
          else 
             io.to(sheetId).emit('user left', {
@@ -51,6 +52,7 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('create sheet', function (sheetName) {
+         console.log("Creating sheet: ", sheetName);
          sheets.insert({name: sheetName})
             .then( data => {
                var id = data.insertedIds[0].toString();
@@ -64,9 +66,9 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('open sheet', function (sheetId, username) {
+         console.log("Opening sheet: ", sheetId, ", User: ", username);
          var id = new OID(sheetId);
 
-         console.log("open sheet attempt");
          sheets.findOne({"_id" : id})
             .then(sheet => {
                socket.username = username;
@@ -106,6 +108,7 @@ function connectSockets(server, db, OID) {
       }); 
    
       socket.on('close sheet', function () {
+         console.log("closing sheet");
          socket.leave(socket.sheet);      
          socket.sheet = undefined;
          delete cursors[sheetId][socket.name];
@@ -121,6 +124,7 @@ function connectSockets(server, db, OID) {
       }); 
    
       socket.on('change sheet style', function (style) {
+         console.log("changing sheet style");
          
          sheets.update({"_id": socket.sheet},
                       {$set: {"style": style}})
@@ -134,6 +138,7 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('select cell', function (cell) {
+         console.log("selecting cell ", cell);
          cursors[socket.sheet][socket.name].cell = cell;
          io.to(socket.sheet).emit('cell selected', {
             username: socket.username
@@ -141,6 +146,7 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('write to cell', function (value, cell) {
+         console.log("writing \"", value, "\" to cell ",  cell);
          var id = new OID(socket.sheet);
          sheets.update({"_id": socket.sheet}, 
                       {$set: {["cells."+cell+".content"]: value}})
@@ -155,16 +161,7 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('change cell style', function (style, cell) {
-         var id = new OID(socket.sheet);
-         sheets.update({"_id": id}, 
-                      {$set: {["cells."+cell+".style"]: style}},
-                       err => {
-                          if (err) 
-                             socket.emit('error'); 
-                       }
-         );
-      });
-      socket.on('change cell style', function (style, cell) {
+         console.log("changing style of cell ",  cell);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
                       {$set: {["cells"+cell+".style"]: value}})
