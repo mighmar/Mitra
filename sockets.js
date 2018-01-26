@@ -23,6 +23,7 @@ function connectSockets(server, db, OID) {
    
       var addedUser = false;
    
+      /*
       socket.on('add user', function (username) {
          if (addedUser) return;
          console.log('User added');
@@ -30,12 +31,23 @@ function connectSockets(server, db, OID) {
          addedUser = true;
          socket.emit('login', username);
       });
+      */
    
       socket.on('disconnect', function () {
-         if (addedUser) {
-            socket.broadcast.emit('user left', {
+         io.to(socket.sheet).emit('user left', { 
+            username: socket.username
+         });   
+
+         delete cursors[sheetId][socket.name];
+         if (io.sockets.adapter.rooms[sheetId].length == 1){
+            delete cursors[sheetId];
+            delete emitters[sheetId];
+            delete colorPointer[sheetId];
+         }
+         else 
+            io.to(sheetId).emit('user left', {
                username: socket.username
-            });   
+            }); 
          }
       });
    
@@ -52,17 +64,18 @@ function connectSockets(server, db, OID) {
             }); 
       });
    
-      socket.on('open sheet', function (sheetId) {
+      socket.on('open sheet', function (sheetId, username) {
          var id = new OID(sheetId);
          sheets.findOne({"_id" : id})
             .then(sheet => {
+               socket.username = username;
                socket.join(sheetId);      
                socket.sheet = sheetId;
+               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
                cursors[sheetId][socket.name].cell = undefined;
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
                cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
-               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
    
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                         emitters[sheetId] = new events.EventEmitter();
@@ -85,7 +98,7 @@ function connectSockets(server, db, OID) {
                      cursor: cursors.sheetId[socket.name]
                   });
                   })
-                  .catch( err => { socket.emit('error'); }
+                  .catch( err => { socket.emit('error', err); }
                   );
          
     
