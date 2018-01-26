@@ -75,35 +75,33 @@ function connectSockets(server, db, OID) {
                socket.join(sheetId);      
                socket.sheet = sheetId;
                socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
+               if (io.sockets.adapter.rooms[sheetId].length == 1){
+                  cursors[sheetId] = {};
+                  emitters[sheetId] = new events.EventEmitter();
+                  for (let f in sheet.functions){
+                     var fun = sheet.functions[f],
+                     target  = fun.target, 
+                     formula = fun.formula, 
+                     args    = fun.args; 
+
+                     for (let a in args){
+                        emitters[sheetId].on(args[a],
+                                 listener(sheetId, target, formula, args));
+                     } 
+                  }
+               }
                cursors[sheetId][socket.name].cell = undefined;
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
                cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
    
-               if (io.sockets.adapter.rooms[sheetId].length == 1){
-                        emitters[sheetId] = new events.EventEmitter();
-                        for (let f in sheet.functions){
-                           var fun = sheet.functions[f],
-                           target  = fun.target, 
-                           formula = fun.formula, 
-                           args    = fun.args; 
-
-                           for (let a in args){
-                              emitters[sheetId].on(args[a],
-                                       listener(sheetId, target, formula, args));
-                           } 
-
-                        }
-               }
                else
                   io.to(sheetId).emit('user joined', {
                      username: socket.username,
                      cursor: cursors.sheetId[socket.name]
                   });
-                  })
-                  .catch( err => { socket.emit('error', err); }
-                  );
-         
+            })
+            .catch( err => { socket.emit('error', err); }); 
     
       }); 
    
