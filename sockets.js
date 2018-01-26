@@ -36,24 +36,28 @@ function connectSockets(server, db, OID) {
       socket.on('disconnect', function () {
          console.log("Disconnecting");
 
-         if (typeof socket.sheet !== 'undefined'){
-            var sheetId = socket.sheet;
-         
-            io.to(sheetId).emit('user left', { 
-               name: socket.name
-            });   
-
-            delete cursors[socket.sheet][socket.name];
-            if (io.sockets.adapter.rooms[sheetId].length == 1){
-               delete cursors[socket.sheet];
-               delete emitters[socket.sheet];
-               delete colorPointer[socket.sheet];
-            }
-            else 
-               io.to(sheetId).emit('user left', {
+         try {
+            if (typeof socket.sheet !== 'undefined'){
+               var sheetId = socket.sheet;
+            
+               io.to(sheetId).emit('user left', { 
                   name: socket.name
-               }); 
+               });   
+
+               delete cursors[socket.sheet][socket.name];
+               if (io.sockets.adapter.rooms[sheetId].length == 1){
+                  delete cursors[socket.sheet];
+                  delete emitters[socket.sheet];
+                  delete colorPointer[socket.sheet];
+               }
+               else 
+                  io.to(sheetId).emit('user left', {
+                     name: socket.name
+                  }); 
+            }
          }
+         catch(e) 
+            console.error("Disconnect error", e);
       });
    
       socket.on('create sheet', function (sheetName) {
