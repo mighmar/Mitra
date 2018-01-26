@@ -35,44 +35,49 @@ function connectSockets(server, db, OID) {
    
       socket.on('disconnect', function () {
          console.log("Disconnecting");
-         io.to(socket.sheet).emit('user left', { 
-            name: socket.name
-         });   
 
-         delete cursors[socket.sheet][socket.name];
-         if (io.sockets.adapter.rooms[sheetId].length == 1){
-            delete cursors[socket.sheet];
-            delete emitters[socket.sheet];
-            delete colorPointer[socket.sheet];
-         }
-         else 
-            io.to(sheetId).emit('user left', {
+         if (typeof socket.sheet !== 'undefined'){
+            var sheetId = socket.sheet;
+         
+            io.to(sheetId).emit('user left', { 
                name: socket.name
-            }); 
+            });   
+
+            delete cursors[socket.sheet][socket.name];
+            if (io.sockets.adapter.rooms[sheetId].length == 1){
+               delete cursors[socket.sheet];
+               delete emitters[socket.sheet];
+               delete colorPointer[socket.sheet];
+            }
+            else 
+               io.to(sheetId).emit('user left', {
+                  name: socket.name
+               }); 
+         }
       });
    
       socket.on('create sheet', function (sheetName) {
          console.log("Creating sheet: ", sheetName);
          sheets.insert({name: sheetName})
-            .then( data => {
+            .then( function(data) {
                var id = data.insertedIds[0].toString();
                socket.emit('new sheet', id);
                colorPointer[id] = 0;
                cursors[id] = {};
                emitters[id] = {};
             })
-            .catch( err => {
+            .catch( function(err) {
             }); 
       });
    
       socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
-         console.log("Opening data: ", data, " (Sheet: ", sheetId, ", User: ", name, ")");
+         console.log("Opening sheet: ", sheetId, ", User: ", name, ")");
 
          var id = new OID(sheetId);
 
          sheets.findOne({"_id" : id})
-            .then(sheet => {
+            .then(function(sheet) {
                socket.name = name;
                socket.join(sheetId);      
                socket.sheet = sheetId;
@@ -102,13 +107,15 @@ function connectSockets(server, db, OID) {
                   cursor: cursors.sheetId[socket.name]
                });
             })
-            .catch( err => { socket.emit('error', err); }); 
+            .catch( function(err) { socket.emit('error', err); }); 
     
       }); 
    
       socket.on('close sheet', function () {
          console.log("closing sheet");
-         socket.leave(socket.sheet);      
+    
+         var sheetId = socket.sheet;
+         socket.leave(sheetId);      
          socket.sheet = undefined;
          delete cursors[sheetId][socket.name];
          if (io.sockets.adapter.rooms[sheetId].length == 1){
@@ -127,10 +134,10 @@ function connectSockets(server, db, OID) {
          
          sheets.update({"_id": socket.sheet},
                       {$set: {"style": style}})
-            .then(() => {
+            .then(function() {
                io.in('sheet style changed', style);
             })
-            .catch( err => {
+            .catch( function(err) {
                if (err)
                   socket.emit('error');
             });
@@ -149,11 +156,11 @@ function connectSockets(server, db, OID) {
          var id = new OID(socket.sheet);
          sheets.update({"_id": socket.sheet}, 
                       {$set: {["cells."+cell+".content"]: value}})
-            .then( () => {
+            .then( function() {
                io.to(socket.sheet).emit('cell written to', value, cell);
                emitters[socket.sheet].emit(cell, sheets, io);
             })
-            .catch( err => {
+            .catch( function(err) {
                if (err) 
                   socket.emit('error'); 
             }); 
@@ -164,10 +171,10 @@ function connectSockets(server, db, OID) {
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
                       {$set: {["cells"+cell+".style"]: value}})
-            .then( () => {
+            .then( function() {
                io.to(socket.sheet).emit('cell changed syle', style, cell);
             })
-            .catch( err => {
+            .catch( function (err) {
                if (err) 
                   socket.emit('error'); 
             }); 
