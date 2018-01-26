@@ -65,7 +65,7 @@ function connectSockets(server, db, OID) {
             }); 
       });
    
-      socket.on('open sheet', data => {
+      socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
          console.log("Opening data: ", data, " (Sheet: ", sheetId, ", User: ", name, ")");
 
