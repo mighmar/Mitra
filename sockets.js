@@ -24,19 +24,19 @@ function connectSockets(server, db, OID) {
       var addedUser = false;
    
       /*
-      socket.on('add user', function (username) {
+      socket.on('add user', function (name) {
          if (addedUser) return;
          console.log('User added');
-         socket.username = username;
+         socket.name = name;
          addedUser = true;
-         socket.emit('login', username);
+         socket.emit('login', name);
       });
       */
    
       socket.on('disconnect', function () {
          console.log("Disconnecting");
          io.to(socket.sheet).emit('user left', { 
-            username: socket.username
+            name: socket.name
          });   
 
          delete cursors[socket.sheet][socket.name];
@@ -47,7 +47,7 @@ function connectSockets(server, db, OID) {
          }
          else 
             io.to(sheetId).emit('user left', {
-               username: socket.username
+               name: socket.name
             }); 
       });
    
@@ -65,13 +65,14 @@ function connectSockets(server, db, OID) {
             }); 
       });
    
-      socket.on('open sheet', function (sheetId, username) {
-         console.log("Opening sheet: ", sheetId, ", User: ", username);
+      socket.on('open sheet', data => {
+         var sheetId = data.sheetId, name = data.name;
+         console.log("Opening sheet: ", sheetId, ", User: ", name);
          var id = new OID(sheetId);
 
          sheets.findOne({"_id" : id})
             .then(sheet => {
-               socket.username = username;
+               socket.name = name;
                socket.join(sheetId);      
                socket.sheet = sheetId;
                socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
@@ -96,7 +97,7 @@ function connectSockets(server, db, OID) {
                cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
    
                io.to(sheetId).emit('user joined', {
-                  username: socket.username,
+                  name: socket.name,
                   cursor: cursors.sheetId[socket.name]
                });
             })
@@ -116,7 +117,7 @@ function connectSockets(server, db, OID) {
          }
          else 
             io.to(sheetId).emit('user left', {
-               username: socket.username
+               name: socket.name
             }); 
       }); 
    
@@ -138,7 +139,7 @@ function connectSockets(server, db, OID) {
          console.log("selecting cell ", cell);
          cursors[socket.sheet][socket.name].cell = cell;
          io.to(socket.sheet).emit('cell selected', {
-            username: socket.username
+            name: socket.name
          });
       });
    
