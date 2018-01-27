@@ -159,10 +159,10 @@ function connectSockets(server, db, OID) {
 
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].color = color;
-               cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].cell = undefined;
 
                var users = cursorsToArray(cursors[sheetId]); 
+               console.log("curses: ", cursors[sheetId], " => users: ", users);
                socket.emit('sheet data', {sheet: sheet, users: users, curses: cursors[sheetId]} );
    
                io.to(sheetId).emit('user joined', {
