@@ -1,6 +1,6 @@
-var events   = require("events");
-var socketIo = require("socket.io");
-var listener = require("./listener").listener;
+var events    = require("events");
+var socketIo  = require("socket.io");
+var functions = require("./functions");
 
 function connectSockets(server, db, OID) {
    var io = socketIo(server);
@@ -74,6 +74,18 @@ function connectSockets(server, db, OID) {
             .catch( function(err) {
             }); 
       });
+
+
+      function setFunctionListeners (fun, emitter) {
+         target  = fun.target, 
+         formula = fun.formula, 
+         args    = fun.args; 
+
+         for (let i in args){
+            emitter.on(args[i],
+                        functions.listener(sheetId, target, formula, args));
+         } 
+      }
    
       socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
@@ -89,17 +101,10 @@ function connectSockets(server, db, OID) {
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                   cursors[sheetId] = {};
                   emitters[sheetId] = new events.EventEmitter();
-                  for (let f in sheet.functions){
-                     var fun = sheet.functions[f],
-                     target  = fun.target, 
-                     formula = fun.formula, 
-                     args    = fun.args; 
 
-                     for (let a in args){
-                        emitters[sheetId].on(args[a],
-                                 listener(sheetId, target, formula, args));
-                     } 
-                  }
+                  for (let f in sheet.functions)
+                     setFunctionListeners(f, emitters[sheetId]);
+
                }
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].cell = undefined;
@@ -157,37 +162,65 @@ function connectSockets(server, db, OID) {
          });
       });
    
-      socket.on('write to cell', function (value, cell) {
+      socket.on('write to cell', function (data) {
+         var value = data.value;
+         var cell = data.cell;
+
          console.log("writing \"", value, "\" to cell ",  cell);
          var id = new OID(socket.sheet);
          sheets.update({"_id": socket.sheet}, 
-                      {$set: {["cells."+cell+".content"]: value}})
+                       {$set: {["cells."+cell+".content"]: value}})
             .then( function() {
-               io.to(socket.sheet).emit('cell written to', value, cell);
+               io.to(socket.sheet).emit('cell written to', data);
                emitters[socket.sheet].emit(cell, sheets, io);
             })
             .catch( function(err) {
                if (err) 
-                  socket.emit('error'); 
+                  socket.emit('cell write error'); 
             }); 
       });
    
-      socket.on('change cell style', function (style, cell) {
+      socket.on('change cell style', function (data) {
+         var style = data.style;
+         var cell = data.cell;
          console.log("changing style of cell ",  cell);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
-                      {$set: {["cells"+cell+".style"]: value}})
+                       {$set: {["cells"+cell+".style"]: value}})
             .then( function() {
-               io.to(socket.sheet).emit('cell changed syle', style, cell);
+               io.to(socket.sheet).emit('cell changed syle', data);
             })
             .catch( function (err) {
                if (err) 
-                  socket.emit('error'); 
+                  socket.emit('cell style error'); 
             }); 
+      });
+
+      socket.on('set function', function (data) {
+         var target = data.target;
+         var formula = data.formula;
+
+         var fun = functions.parse(formula);
+         fun.target = target;
+
+         var id = new OID(socket.sheet);
+         sheets.update({"_id": id},
+                       {"$push": 
+                          {"functions": fun}
+                       
+         })
+            .then(function () {
+               setFunctionListeners(fun, emitters[socket.sheet]);
+               io.to(socket.sheet).emit('function set', data);
+         })
+            .catch(function (err) {
+               if (err){
+                  io.emit('setting function error');
+               }
+         });
+
       });
          
    
    });
 }
-
-exports.connect = connectSockets;

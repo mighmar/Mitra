@@ -1,10 +1,10 @@
 var Parser = require('expr-eval').Parser;
 
-function listener(sheetId, cell, formula, args) {
+function listener(sheetId, target, formula, args) {
    return function (sheets, io) {
       sheets.findOne({"_id": sheetId})
          .then (sheet => {
-            var vArgs = args.map (x => sheet.cells[x]);
+            var vArgs = args.map (x => sheet.target[x]);
 	    var variables = {};
             var parser = new Parser();
 
@@ -13,9 +13,9 @@ function listener(sheetId, cell, formula, args) {
             var newValue = parser.parse(formula).evaluate(variables);
 
             sheet.update({"_id": sheetId}, 
-                         {$set: {["cells."+cell+".content"]: newValue}})
+                         {$set: {["cells."+target+".content"]: newValue}})
                .then( () => {
-                  io.to(sheetId).emit('cell written to', newValue, cell);
+                  io.to(sheetId).emit('cell changed by function', newValue, target);
                })
                .catch( err => {
                   if (err) 
@@ -27,4 +27,23 @@ function listener(sheetId, cell, formula, args) {
    }
 }
 
+function parseFunction(formula){
+   var result = {};
+   result.args = [];
+   var i = 1;
+   var match;
+   var re = /[A-Z]+[1-9][0-9]*/
+
+   while((match = re.exec(formula)) != null) {
+      result.args.push(match[0]);
+      formula = formula.replace(match[0], "x" + i++);
+   }
+
+   result.formula = formula;
+
+   return result;
+
+}
+
 exports.listener = listener;
+exports.parse = parseFunction;
