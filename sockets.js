@@ -101,11 +101,11 @@ function connectSockets(server, db, OID) {
                      } 
                   }
                }
-               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
                cursors[sheetId][socket.name].cell = undefined;
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
                cursors.sheetId[socket.name].color = colors[colorPointer[sheetId]];
+               socket.emit('sheet data', {sheet: sheet, users: cursors.sheetId});
    
                io.to(sheetId).emit('user joined', {
                   name: socket.name,
