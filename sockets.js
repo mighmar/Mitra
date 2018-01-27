@@ -229,11 +229,11 @@ function connectSockets(server, db, OID) {
          console.log("selecting cell ", cell);
  
          cursors[socket.sheet][socket.name].cell = cell;
-         io.to(socket.sheet).emit('cell selected', {
-            name: socket.name,
-            row: coord.row;
-            col: coord.col;
-         });
+         var clone = Object.assign({}, cursors[socket.sheet]);
+         delete clone[socket.name];
+         
+         var users = cursorsToArray(clone); 
+         io.to(socket.sheet).emit('cell selected', users);
       });
    
       socket.on('write to cell', function (data) {
