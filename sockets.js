@@ -56,8 +56,9 @@ function connectSockets(server, db, OID) {
                   }); 
             }
          }
-         catch(e) 
-            console.log("Disconnect error", e);
+         catch(e) {
+            console.error("Disconnect error", e);
+         }
       });
    
       socket.on('create sheet', function (sheetName) {
