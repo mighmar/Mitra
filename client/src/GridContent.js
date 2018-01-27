@@ -42,18 +42,13 @@ export default withAuth (class GridContent extends React.Component {
 
             }
         ,
-        userSelection:[
-            {'username':'Filip','col':5,'row':12, 'color':'coral'},
-            {'username':'Marko','col':5,'row':12, 'color':'gold'},
-            {'username':'Stefan','col':5,'row':12, 'color':'green'}
-        ],
-        userStyles:{
-            12:{ 5:{'border-style':'solid', 'border-color':'green', 'border-width':'2px'}},
-            4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
-            15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
-        },
+            userSelection:[]
+        ,
+        userStyles:{}
+        ,
         stylePanelVisible:false,
     };
+
 
 
 
@@ -74,19 +69,49 @@ export default withAuth (class GridContent extends React.Component {
 
     }
 
+
+
     setSheetId(sheetId){
         this.setState({"spreadSheetId":[sheetId]});
     }
 
-
     async componentDidMount(){
+        let  userSelection = [
+            {'username':'Filip','col':"5",'row':5, 'color':'coral'},
+            {'username':'Marko','col':3,'row':2, 'color':'gold'}
+        ];
+
+        this.setState({"userSelection":userSelection});
+        let userStyles={};
+        for (const user in userSelection) {
+                const element = userSelection[user];
+                let colObj={};
+                colObj[element.col]={};
+                colObj[element.col]["border-style"]="solid";
+                colObj[element.col]["border-color"]=element.color;
+                colObj[element.col]["border-width"]="2px";
+                //alert(element.row+"  "+JSON.stringify(colObj))
+                userStyles[element.row]=colObj;
+        }
+        //alert(JSON.stringify(userStyles));
+        /*let userStyles = {
+            12:{ "2":{'border-style':'solid', 'border-color':'green', 'border-width':'2px'}},
+            4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
+            15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
+        };*/
+        this.setState({"userStyles":userStyles});
+
         let username="";
         try{
             username= JSON.stringify((await this.props.auth.getUser())["email"]);
+            
+            //alert(this.props.match.params.sheetId);
+            
             if(this.props.match ===undefined ||
                 this.props.match.params===undefined ||
-                this.props.match.params.sheetId===undefined)
+                this.props.match.params.sheetId===undefined){
                 createSheet(this.setSheetId.bind(this));
+            }
             else{
                 openSheet(this.props.match.params.sheetId);
             }
@@ -236,7 +261,8 @@ export default withAuth (class GridContent extends React.Component {
                     </table>
                 </div>
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridUsers" >
-                    {this.state.userSelection.map(el=>{
+                    {                       
+                        this.state.userSelection.map(el=>{
                         let usColor = el.color;
                         let currStyle = {
                             "width":"5px",

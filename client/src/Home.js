@@ -31,7 +31,7 @@ export default withAuth(class Home extends Component {
 
     const button = this.state.authenticated ?
         "" :
-      <button className="welcomeButton" onClick={this.props.auth.login}>Proceed to login page</button>;
+      <button className="welcomeButton" onClick={this.props.auth.login}>I want to start right away!</button>;
     
 
       if(this.state.authenticated){
