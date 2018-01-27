@@ -77,14 +77,50 @@ function connectSockets(server, db, OID) {
 
 
       function setFunctionListeners (fun, emitter) {
-         target  = fun.target, 
-         formula = fun.formula, 
-         args    = fun.args; 
+         var target  = fun.target, 
+         formula     = fun.formula, 
+         args        = fun.args; 
 
          for (let i in args){
             emitter.on(args[i],
                         functions.listener(sheetId, target, formula, args));
          } 
+      }
+
+
+      function cellToCoords (cell) {
+         var res = {};
+         var re = /^([A-Z]+)([1-9][0-9]*)$/
+         var split = re.exec(cell);
+         res.col = split[2];
+         var alpha = split[1];
+         var A = 'A'.charCodeAt(0);
+         
+         var val = 0;
+         for (var i = 0; i < alpha.length; i++) {
+            val *= 26;
+            val += alpha[i].charCodeAt(0) - A; 
+         } 
+         res.row = val;
+      }
+
+
+      function cursorsToArray (curses) {
+         var result = [];
+
+         for (let c in curses){
+            var user = {};
+            user.username = c;
+            user.color = curses[c].color; 
+
+
+            var coords = cellToCoords(curses[c].cell);
+            user.row = coords.row;
+            user.col = coords.col;
+
+            result.push(user);
+         }  
+         return result;
       }
    
       socket.on('open sheet', function (data) {
@@ -106,12 +142,16 @@ function connectSockets(server, db, OID) {
                      setFunctionListeners(f, emitters[sheetId]);
 
                }
-               cursors[sheetId][socket.name] = {};
-               cursors[sheetId][socket.name].cell = undefined;
+               var users = cursorsToArray(cursors[sheetId]);
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
-               cursors[sheetId][socket.name].color = colors[colorPointer[sheetId]];
-               socket.emit('sheet data', {sheet: sheet, users: cursors[sheetId]});
+               var color = colors[colorPointer[sheetId]];
+
+               socket.emit('sheet data', {sheet: sheet, users: users, color: color} );
+
+               cursors[sheetId][socket.name].color = color;
+               cursors[sheetId][socket.name] = {};
+               cursors[sheetId][socket.name].cell = undefined;
    
                io.to(sheetId).emit('user joined', {
                   name: socket.name,
