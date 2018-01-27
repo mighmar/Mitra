@@ -47,6 +47,8 @@ export default withAuth (class GridContent extends React.Component {
         userStyles:{}
         ,
         stylePanelVisible:false,
+        colorPickerSelection:'#fff',
+        fontFamilySelection:'Arial'
     };
 
 
@@ -75,11 +77,12 @@ export default withAuth (class GridContent extends React.Component {
         this.setState({"spreadSheetId":[sheetId]});
     }
 
-    async componentDidMount(){
-        let  userSelection = [
+    openSheetCallback = (sheetData)=>{
+        let userSelection = sheetData["users"];
+        /*let  userSelection = [
             {'username':'Filip','col':"5",'row':5, 'color':'coral'},
             {'username':'Marko','col':3,'row':2, 'color':'gold'}
-        ];
+        ];*/
 
         this.setState({"userSelection":userSelection});
         let userStyles={};
@@ -100,6 +103,10 @@ export default withAuth (class GridContent extends React.Component {
             15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
         };*/
         this.setState({"userStyles":userStyles});
+    }
+
+    async componentDidMount(){
+
 
         let username="";
         try{
@@ -113,7 +120,7 @@ export default withAuth (class GridContent extends React.Component {
                 createSheet(this.setSheetId.bind(this));
             }
             else{
-                openSheet(this.props.match.params.sheetId);
+                openSheet(this.props.match.params.sheetId, this.openSheetCallback.bind(this));
             }
         }catch(err){
 
@@ -121,8 +128,9 @@ export default withAuth (class GridContent extends React.Component {
         
     }
 
+
     handleCellValueChange= (i,j,event)=>{
-        let value = event.target.firstChild.nodeValue;
+        let value = event.target.value;
         if(i!==undefined && j!==undefined){
             this.setState((previousState) => {
                 //console.log(i+" "+j+" "+value);
@@ -174,6 +182,8 @@ export default withAuth (class GridContent extends React.Component {
         }
     }
     handleColorChange= (color)=>{
+        let cl = color.hex;
+        this.setState({"colorPickerSelection":cl});
         let i=this.state.userRowCol.row;
         let j= this.state.userRowCol.col;
         if(i!==undefined && j!==undefined){
@@ -234,7 +244,7 @@ export default withAuth (class GridContent extends React.Component {
                 <div className="col-lg-1 col-lg-1 col-xl-1 " >
                 </div>
             </div>
-            <StylePanel styleVisible={this.state.stylePanelVisible} handleColorChange={this.handleColorChange.bind(this)} handleFontChange={this.handleFontChange.bind(this)} />
+            <StylePanel styleVisible={this.state.stylePanelVisible} handleColorChange={this.handleColorChange.bind(this)} handleFontChange={this.handleFontChange.bind(this)} currColor={this.state.colorPickerSelection}/>
             <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
                     <div className="row centerFlex">

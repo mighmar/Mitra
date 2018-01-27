@@ -17,14 +17,14 @@ function createSheet(sheetIdCall){
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
 
-function openSheet(sheetId){
+function openSheet(sheetId,openSheetCallback){
 let message={
     "sheetId":sheetId,
     "name":"Filip"
   };
   //alert(JSON.stringify(message));
   socket.emit("open sheet",message);
-  socket.on("sheet data",sheetData=> alert(JSON.stringify(sheetData)));
+  socket.on("sheet data",sheetData=> openSheetCallback(sheetData));
 }
 
 function closeSheet(sheetIdCall){
