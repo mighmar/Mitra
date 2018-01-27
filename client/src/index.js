@@ -31,8 +31,7 @@ ReactDOM.render(
         <Route path="/" component={Header}/>
         <Route path="/" exact={true} component={Home}/>
         <SecureRoute exact={true} path="/dashboard" component={DashboardContent}/>
-        <SecureRoute  path="/grid/" component={GridContent}/>
-        <SecureRoute  path="/grid/:sheetId" component={GridContent}/>
+        <SecureRoute   exact={true} path="/grid/:sheetId" component={GridContent}/>
         <SecureRoute  path="/existing" component={LoadExistingContent}/>
         <SecureRoute  path="/configuration" component={ConfigurationContent}/>
         <Route path='/login' render={() => <Login baseUrl='https://dev-868306.oktapreview.com' />} />

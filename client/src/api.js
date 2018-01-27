@@ -18,7 +18,12 @@ function createSheet(sheetIdCall){
 }
 
 function openSheet(sheetId){
-  socket.emit("open sheet",sheetId);
+let message={
+    "sheetId":sheetId,
+    "name":"Filip"
+  };
+  //alert(JSON.stringify(message));
+  socket.emit("open sheet",message);
   socket.on("sheet data",sheetData=> alert(JSON.stringify(sheetData)));
 }
 
