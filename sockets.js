@@ -90,18 +90,26 @@ function connectSockets(server, db, OID) {
 
       function cellToCoords (cell) {
          var res = {};
-         var re = /^([A-Z]+)([1-9][0-9]*)$/
-         var split = re.exec(cell);
-         res.col = split[2];
-         var alpha = split[1];
-         var A = 'A'.charCodeAt(0);
-         
-         var val = 0;
-         for (var i = 0; i < alpha.length; i++) {
-            val *= 26;
-            val += alpha[i].charCodeAt(0) - A; 
-         } 
-         res.row = val;
+         if (typeof cell !== 'undefined') { 
+            var re = /^([A-Z]+)([1-9][0-9]*)$/
+            var split = re.exec(cell);
+            res.col = split[2];
+            var alpha = split[1];
+            var A = 'A'.charCodeAt(0);
+            
+            var val = 0;
+            for (var i = 0; i < alpha.length; i++) {
+               val *= 26;
+               val += alpha[i].charCodeAt(0) - A; 
+            } 
+            res.row = val;
+         }
+         else {
+            res.row = undefined;
+            res.col = undefined;
+         }
+
+         return res;
       }
 
 
