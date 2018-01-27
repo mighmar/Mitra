@@ -105,8 +105,8 @@ function connectSockets(server, db, OID) {
             res.row = val;
          }
          else {
-            res.row = "undefined";
-            res.col = "undefined";
+            res.row = null;
+            res.col = null;
          }
 
          return res;
