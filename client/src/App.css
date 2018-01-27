@@ -11,7 +11,7 @@
 
 .defaultCell{
   background-color: white;
-  border:1px solid #aaaaaa;
+  border:1px solid rgb(194, 194, 194);
   height:30px;
   min-width: 100px;
 }
@@ -19,8 +19,14 @@
 .userCell{
   background-color: white;
   border:2px solid #3CB34B;
+  height:32px;
+  width: 152px;
+}
+.userCellText{
+  background-color: white;
+  border:none;
   height:30px;
-  min-width: 100px;
+  width: 150px;
 }
 
 .firstRowCell{

@@ -34,7 +34,7 @@ class StylePanel extends React.Component {
           Cell background color:
           </div>
           <div className="col-lg-2 col-lg-2 col-xl-2" /*onClick={ ()=>{this.props.changePage("Dashboard")}}*/>
-            <CompactPicker onChangeComplete={this.props.handleColorChange} />
+            <CompactPicker color={this.props.currColor} onChangeComplete={this.props.handleColorChange} />
 
           </div>
           <div className="col-lg-3 col-lg-3 col-xl-3" /*onClick={ ()=>{this.props.changePage("Dashboard")}}*/>
