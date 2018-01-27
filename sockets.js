@@ -93,44 +93,38 @@ function connectSockets(server, db, OID) {
          if (typeof cell !== 'undefined') { 
             var re = /^([A-Z]+)([1-9][0-9]*)$/
             var split = re.exec(cell);
-            res.col = split[2];
+            res.row = split[2];
             var alpha = split[1];
             var A = 'A'.charCodeAt(0);
             
             var val = 0;
             for (var i = 0; i < alpha.length; i++) {
                val *= 26;
-               val += alpha[i].charCodeAt(0) - A; 
+               val += alpha[i].charCodeAt(0) - A + 1;
             } 
-            res.row = val;
+            res.col = val;
          }
          else {
-            res.row = null;
             res.col = null;
+            res.row = null;
          }
 
          return res;
       }
 
       function coordsToCell (coord) {
-         var res = {};
-         if (typeof cell !== 'undefined') { 
-            var re = /^([A-Z]+)([1-9][0-9]*)$/
-            var split = re.exec(cell);
-            res.col = split[2];
-            var alpha = split[1];
+         var res = "";
+         if (coord.row != null && coord.col != null) { 
             var A = 'A'.charCodeAt(0);
             
-            var val = 0;
-            for (var i = 0; i < alpha.length; i++) {
-               val *= 26;
-               val += alpha[i].charCodeAt(0) - A; 
+            var val;
+            for (val = coord.col; val != 0; val = Math.floor(val/26)) {
+               res = String.fromCharCode(A + val % 26 - 1) + res;
             } 
-            res.row = val;
+            res+= coord.col;
          }
          else {
-            res.row = null;
-            res.col = null;
+            res = undefined;
          }
 
          return res;
@@ -183,7 +177,7 @@ function connectSockets(server, db, OID) {
 
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].color = color;
-               cursors[sheetId][socket.name].cell = "AC10";
+               cursors[sheetId][socket.name].cell = undefined;
 
                var users = cursorsToArray(cursors[sheetId]); 
                console.log("curses: ", cursors[sheetId], " => users: ", users);
@@ -230,11 +224,15 @@ function connectSockets(server, db, OID) {
             });
       });
    
-      socket.on('select cell', function (cell) {
+      socket.on('select cell', function (coord) {
+         var cell = coordsToCell(coord);
          console.log("selecting cell ", cell);
+ 
          cursors[socket.sheet][socket.name].cell = cell;
          io.to(socket.sheet).emit('cell selected', {
-            name: socket.name
+            name: socket.name,
+            row: coord.row;
+            col: coord.col;
          });
       });
    
