@@ -155,6 +155,7 @@ function connectSockets(server, db, OID) {
                var color = colors[colorPointer[sheetId]];
 
 
+               cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].color = color;
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].cell = undefined;
