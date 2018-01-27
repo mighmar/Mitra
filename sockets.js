@@ -115,9 +115,10 @@ function connectSockets(server, db, OID) {
 
       function cursorsToArray (curses) {
          var result = [];
+         var user = {};
 
          for (let c in curses){
-            var user = {};
+            user = {};
             user.username = c;
             user.color = curses[c].color; 
 
@@ -142,24 +143,26 @@ function connectSockets(server, db, OID) {
                socket.name = name;
                socket.join(sheetId);      
                socket.sheet = sheetId;
+ 
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                   cursors[sheetId] = {};
+                  colorPointer[sheetId] = 0; 
                   emitters[sheetId] = new events.EventEmitter();
-
                   for (let f in sheet.functions)
-                     setFunctionListeners(f, emitters[sheetId]);
-
+                     setFunctionListeners(f, emitters[sheetId]); 
                }
+ 
+               var color = colors[colorPointer[sheetId]];
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
-               var color = colors[colorPointer[sheetId]];
 
 
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].color = color;
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].cell = undefined;
-               var users = cursorsToArray(cursors[sheetId]);
+
+               var users = cursorsToArray(cursors[sheetId]); 
                socket.emit('sheet data', {sheet: sheet, users: users, color: color} );
    
                io.to(sheetId).emit('user joined', {
