@@ -8,7 +8,7 @@ function connectSockets(server, db, OID) {
    var cursors = {};
    const colors = ["red", "green", "blue",
                    "yellow", "black", "purple",
-                   "mint", "orange", "cyan",
+                   "orange", "cyan", //"mint",
                    "brown", "teal", "black",
                    "lavander", "lime", "navy",
                    "olive", "pink", "beige",
@@ -163,7 +163,7 @@ function connectSockets(server, db, OID) {
                cursors[sheetId][socket.name].cell = undefined;
 
                var users = cursorsToArray(cursors[sheetId]); 
-               socket.emit('sheet data', {sheet: sheet, users: users, color: color} );
+               socket.emit('sheet data', {sheet: sheet, users: users, curses: cursors[sheetId]} );
    
                io.to(sheetId).emit('user joined', {
                   name: socket.name,
