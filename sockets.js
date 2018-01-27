@@ -121,7 +121,7 @@ function connectSockets(server, db, OID) {
             for (val = coord.col; val != 0; val = Math.floor(val/26)) {
                res = String.fromCharCode(A + val % 26 - 1) + res;
             } 
-            res+= coord.col;
+            res+= coord.row;
          }
          else {
             res = undefined;
