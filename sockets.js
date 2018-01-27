@@ -142,16 +142,16 @@ function connectSockets(server, db, OID) {
                      setFunctionListeners(f, emitters[sheetId]);
 
                }
-               var users = cursorsToArray(cursors[sheetId]);
                colorPointer[sheetId]++;
                colorPointer[sheetId] %= nColors;
                var color = colors[colorPointer[sheetId]];
 
-               socket.emit('sheet data', {sheet: sheet, users: users, color: color} );
 
                cursors[sheetId][socket.name].color = color;
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].cell = undefined;
+               var users = cursorsToArray(cursors[sheetId]);
+               socket.emit('sheet data', {sheet: sheet, users: users, color: color} );
    
                io.to(sheetId).emit('user joined', {
                   name: socket.name,
