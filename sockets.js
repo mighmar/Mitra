@@ -224,3 +224,5 @@ function connectSockets(server, db, OID) {
    
    });
 }
+
+exports.connect = connectSockets;
