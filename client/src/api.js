@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { create } from 'domain';
-const socket = io('//localhost:3001');
+const socket = io('http//localhost:3001');
 //const  socket = openSocket('http://localhost:3001');
 
 function addUser() {
