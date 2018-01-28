@@ -145,7 +145,7 @@ function connectSockets(server, db, OID) {
          sheets.update({"_id": socket.sheet},
                       {$set: {"style": style}})
             .then(function() {
-               io.in('sheet style changed', style);
+               io.to(socket.sheet).emit('sheet style changed', style);
             })
             .catch( function(err) {
                if (err)
