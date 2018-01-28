@@ -7,12 +7,12 @@ var config  = require("./config").server;
     mongodb = require("./mongodb");
     sockets = require("./sockets");
  
-    process.on('uncaughtException', function (err) {
-        console.log(err);
-    }); 
+
 
 app.use(cors());
 app.set("port", config.port)
+
+var intervalID = setInterval(function(){console.log("I'm alive!");}, 50000);
 
 if (process.env.NODE_ENV === "production") 
    app.use(express.static("client/build"));
