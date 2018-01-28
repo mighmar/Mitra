@@ -1,6 +1,9 @@
 var events    = require("events");
 var socketIo  = require("socket.io");
+
 var functions = require("./functions");
+var misc = require("./miscellaneous");
+
 
 function connectSockets(server, db, OID) {
    var io = socketIo(server);
@@ -19,19 +22,7 @@ function connectSockets(server, db, OID) {
 
    io.on('connection', function (socket) {
       console.log('Connected');
-
-   
       var userJoined = false;
-   
-      /*
-      socket.on('add user', function (name) {
-         if (addedUser) return;
-         console.log('User added');
-         socket.name = name;
-         addedUser = true;
-         socket.emit('login', name);
-      });
-      */
    
       socket.on('disconnect', function () {
          console.log("Disconnecting");
@@ -40,22 +31,23 @@ function connectSockets(server, db, OID) {
             if (typeof socket.sheet !== 'undefined'){
                var sheetId = socket.sheet;
             
-               io.to(sheetId).emit('user left', { 
-                  name: socket.name
-               });   
-
                delete cursors[socket.sheet][socket.name];
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                   delete cursors[socket.sheet];
                   delete emitters[socket.sheet];
                   delete colorPointer[socket.sheet];
                }
-               else 
-                  io.to(sheetId).emit('user left', {
-                     name: socket.name
-                  }); 
-               enteredSheet = false;
+               else { 
+                  var clone = Object.assign({}, cursors[socket.sheet]);
+                  delete clone[socket.name];
+                  
+                  var users = misc.cursorsToArray(clone); 
+                  io.to(socket.sheet).emit('user left', users);
+               }
+               userJoined = false;
             }
+            else 
+               socket.emit('disconnect denied'); 
          }
          catch(e) {
             console.error("Disconnect error", e);
@@ -77,79 +69,6 @@ function connectSockets(server, db, OID) {
       });
 
 
-      function setFunctionListeners (fun, emitter) {
-         var target  = fun.target, 
-         formula     = fun.formula, 
-         args        = fun.args; 
-
-         for (let i in args){
-            emitter.on(args[i],
-                        functions.listener(sheetId, target, formula, args));
-         } 
-      }
-
-
-      function cellToCoords (cell) {
-         var res = {};
-         if (typeof cell !== 'undefined') { 
-            var re = /^([A-Z]+)([1-9][0-9]*)$/
-            var split = re.exec(cell);
-            res.row = split[2];
-            var alpha = split[1];
-            var A = 'A'.charCodeAt(0);
-            
-            var val = 0;
-            for (var i = 0; i < alpha.length; i++) {
-               val *= 26;
-               val += alpha[i].charCodeAt(0) - A + 1;
-            } 
-            res.col = val;
-         }
-         else {
-            res.col = null;
-            res.row = null;
-         }
-
-         return res;
-      }
-
-      function coordsToCell (coord) {
-         var res = "";
-         if (coord.row != null && coord.col != null) { 
-            var A = 'A'.charCodeAt(0);
-            
-            var val;
-            for (val = coord.col; val != 0; val = Math.floor(val/26)) {
-               res = String.fromCharCode(A + val % 26 - 1) + res;
-            } 
-            res+= coord.row;
-         }
-         else {
-            res = undefined;
-         }
-
-         return res;
-      }
-
-
-      function cursorsToArray (curses) {
-         var result = [];
-         var user = {};
-
-         for (let c in curses){
-            user = {};
-            user.username = c;
-            user.color = curses[c].color; 
-
-
-            var coords = cellToCoords(curses[c].cell);
-            user.row = coords.row;
-            user.col = coords.col;
-
-            result.push(user);
-         }  
-         return result;
-      }
    
       socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
@@ -168,7 +87,7 @@ function connectSockets(server, db, OID) {
                   colorPointer[sheetId] = 0; 
                   emitters[sheetId] = new events.EventEmitter();
                   for (let f in sheet.functions)
-                     setFunctionListeners(f, emitters[sheetId]); 
+                     misc.setFunctionListeners(f, emitters[sheetId]); 
                }
  
                var color = colors[colorPointer[sheetId]];
@@ -180,7 +99,7 @@ function connectSockets(server, db, OID) {
                cursors[sheetId][socket.name].color = color;
                cursors[sheetId][socket.name].cell = undefined;
 
-               var users = cursorsToArray(cursors[sheetId]); 
+               var users = misc.cursorsToArray(cursors[sheetId]); 
                console.log("curses: ", cursors[sheetId], " => users: ", users);
                socket.emit('sheet data', {sheet: sheet, users: users, curses: cursors[sheetId]} );
  
@@ -189,11 +108,20 @@ function connectSockets(server, db, OID) {
                   name: socket.name,
                   cursor: cursors[sheetId][socket.name]
                });
+
+               sheets.update({"_id": id}, 
+                             {"$push": {"visitors": socket.name}
+               })
+                  .catch(function () {
+                     console.error("Mark visitor error");
+                  });
+                  
             })
             .catch( function(err) { socket.emit('error', err); }); 
     
       }); 
    
+/*
       socket.on('close sheet', function () {
          console.log("closing sheet");
     
@@ -211,6 +139,7 @@ function connectSockets(server, db, OID) {
                name: socket.name
             }); 
       }); 
+*/
    
       socket.on('change sheet style', function (style) {
          console.log("changing sheet style");
@@ -229,14 +158,14 @@ function connectSockets(server, db, OID) {
       socket.on('select cell', function (coord) {
          try {
             if (userJoined) {
-               var cell = coordsToCell(coord);
+               var cell = misc.coordsToCell(coord);
                console.log("selecting cell ", cell);
  
                cursors[socket.sheet][socket.name].cell = cell;
                var clone = Object.assign({}, cursors[socket.sheet]);
                delete clone[socket.name];
                
-               var users = cursorsToArray(clone); 
+               var users = misc.cursorsToArray(clone); 
                io.to(socket.sheet).emit('cell selected', users);
             }
             else 
@@ -281,6 +210,13 @@ function connectSockets(server, db, OID) {
             }); 
       });
 
+      socket.on('visited sheets', function (name) {
+         sheets.find({"visitors": socket.name}).project({}).toArray()
+            .then(function(data) {
+               socket.emit('sheets visited', data);
+            });
+      });
+
       socket.on('set function', function (data) {
          var target = data.target;
          var formula = data.formula;
@@ -295,7 +231,7 @@ function connectSockets(server, db, OID) {
                        
          })
             .then(function () {
-               setFunctionListeners(fun, emitters[socket.sheet]);
+               misc.setFunctionListeners(fun, emitters[socket.sheet], socket.sheet);
                io.to(socket.sheet).emit('function set', data);
          })
             .catch(function (err) {
@@ -304,8 +240,7 @@ function connectSockets(server, db, OID) {
                }
          });
 
-      });
-         
+      }); 
    
    });
 }
