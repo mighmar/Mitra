@@ -101,13 +101,10 @@ function connectSockets(server, db, OID) {
 
                var users = misc.cursorsToArray(cursors[sheetId]); 
                console.log("curses: ", cursors[sheetId], " => users: ", users);
-               socket.emit('sheet data', {sheet: sheet, users: users, curses: cursors[sheetId]} );
+               socket.emit('sheet data', {sheet: sheet, users: users});
  
                userJoined = true;
-               io.to(sheetId).emit('user joined', {
-                  name: socket.name,
-                  cursor: cursors[sheetId][socket.name]
-               });
+               io.to(sheetId).emit('user joined', users);
 
                sheets.update({"_id": id}, 
                              {"$push": {"visitors": socket.name}
@@ -163,7 +160,7 @@ function connectSockets(server, db, OID) {
  
                cursors[socket.sheet][socket.name].cell = cell;
                var clone = Object.assign({}, cursors[socket.sheet]);
-               //delete clone[socket.name];
+               delete clone[socket.name];
                
                var users = misc.cursorsToArray(clone); 
                io.to(socket.sheet).emit('cell selected', users);
@@ -178,7 +175,8 @@ function connectSockets(server, db, OID) {
    
       socket.on('write to cell', function (data) {
          var value = data.value;
-         var cell = data.cell;
+         var coords = {row: data.row, col: data.col};
+         var cell = misc.coordsToCell(coords);
 
          console.log("writing \"", value, "\" to cell ",  cell);
          var id = new OID(socket.sheet);
@@ -245,4 +243,4 @@ function connectSockets(server, db, OID) {
    });
 }
 
-exports.connect = connectSockets;
+exports.connect = connect;
