@@ -1,5 +1,7 @@
 var Parser = require('expr-eval').Parser;
 
+var misc = require('./miscellaneous');
+
 function listener(sheetId, target, formula, args) {
    return function (sheets, io) {
       sheets.findOne({"_id": sheetId})
@@ -15,7 +17,9 @@ function listener(sheetId, target, formula, args) {
             sheet.update({"_id": sheetId}, 
                          {$set: {["cells."+target+".content"]: newValue}})
                .then( () => {
-                  io.to(sheetId).emit('cell changed by function', newValue, target);
+                  var data = misc.cellToCoords(target);
+                  data.value = newValue;
+                  io.to(sheetId).emit('cell changed by function', data);
                })
                .catch( err => {
                   if (err) 
@@ -23,23 +27,31 @@ function listener(sheetId, target, formula, args) {
                }); 
             
          })
-         .catch(err => {}); 
+         .catch(function(err) {
+            console.error("listener call error: ", err);   
+         }); 
    }
 }
 
 function parseFunction(formula){
    var result = {};
-   result.args = [];
-   var i = 1;
-   var match;
-   var re = /[A-Z]+[1-9][0-9]*/
 
-   while((match = re.exec(formula)) != null) {
-      result.args.push(match[0]);
-      formula = formula.replace(match[0], "x" + i++);
+   try {
+      result.args = [];
+      var i = 1;
+      var match;
+      var re = /[A-Z]+[1-9][0-9]*/
+
+      while((match = re.exec(formula)) != null) {
+         result.args.push(match[0]);
+         formula = formula.replace(match[0], "x" + i++);
+      }
+
+      result.formula = formula;
    }
-
-   result.formula = formula;
+   catch (err) {
+      console.error("Parse function error: ", err);
+   }
 
    return result;
 

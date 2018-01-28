@@ -42,7 +42,7 @@ function connectSockets(server, db, OID) {
                   delete clone[socket.name];
                   
                   var users = misc.cursorsToArray(clone); 
-                  io.to(socket.sheet).emit('user left', users);
+                  socket.to(socket.sheet).emit('user left', users);
                }
                userJoined = false;
             }
@@ -105,7 +105,7 @@ function connectSockets(server, db, OID) {
                socket.emit('sheet data', {sheet: sheet, users: users});
  
                userJoined = true;
-               io.to(sheetId).emit('user joined', users);
+               socket.to(sheetId).emit('user joined', users);
 
                sheets.update({"_id": id}, 
                              {"$push": {"visitors": socket.name}
@@ -133,7 +133,7 @@ function connectSockets(server, db, OID) {
             delete colorPointer[sheetId];
          }
          else 
-            io.to(sheetId).emit('user left', {
+            socket.to(sheetId).emit('user left', {
                name: socket.name
             }); 
       }); 
@@ -184,7 +184,7 @@ function connectSockets(server, db, OID) {
          sheets.update({"_id": socket.sheet}, 
                        {$set: {["cells."+cell+".content"]: value}})
             .then( function() {
-               io.to(socket.sheet).emit('cell written to', data);
+               socket.to(socket.sheet).emit('cell written to', data);
                emitters[socket.sheet].emit(cell, sheets, io);
             })
             .catch( function(err) {
@@ -195,7 +195,7 @@ function connectSockets(server, db, OID) {
    
       socket.on('change cell style', function (data) {
          var style = data.style;
-         var coords = {row: data.row, col: data.col};
+         var coords = {"row": data.row, "col": data.col};
          var cell = misc.coordsToCell(coords);
 
          console.log("changing style of cell ",  cell);
@@ -203,7 +203,7 @@ function connectSockets(server, db, OID) {
          sheets.update({"_id": id}, 
                        {$set: {["cells"+cell+".style"]: value}})
             .then( function() {
-               io.to(socket.sheet).emit('cell changed syle', data);
+               socket.to(socket.sheet).emit('cell changed syle', data);
             })
             .catch( function (err) {
                if (err) 
@@ -219,8 +219,9 @@ function connectSockets(server, db, OID) {
       });
 
       socket.on('set function', function (data) {
-         var target = data.target;
+         var coords = {"row": data.row, "col": data.col};
          var formula = data.formula;
+         var target = misc.coordsToCell(coords);
 
          var fun = functions.parse(formula);
          fun.target = target;
@@ -233,11 +234,11 @@ function connectSockets(server, db, OID) {
          })
             .then(function () {
                misc.setFunctionListeners(fun, emitters[socket.sheet], socket.sheet);
-               io.to(socket.sheet).emit('function set', data);
+               socket.to(socket.sheet).emit('function set', data);
          })
             .catch(function (err) {
                if (err){
-                  io.emit('setting function error');
+                  socket.emit('setting function error');
                }
          });
 
