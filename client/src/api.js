@@ -27,6 +27,16 @@ let message={
   socket.on("sheet data",sheetData=> openSheetCallback(sheetData));
 }
 
+function onUserCellChange(changeCellCallback){
+  socket.on("cell selected", cellInfo=> changeCellCallback(cellInfo));
+
+}
+
+function selectCellUsers(cellCoord){
+  console.log("saljem");
+  socket.emit("select cell",cellCoord);
+}
+
 function closeSheet(sheetIdCall){
   let newSheet={
     "name":"New spreadsheet"
@@ -34,4 +44,4 @@ function closeSheet(sheetIdCall){
   socket.emit("create sheet",newSheet);
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
-export { addUser,createSheet,openSheet };
+export { addUser,createSheet,openSheet,onUserCellChange,selectCellUsers };
