@@ -142,7 +142,8 @@ function connectSockets(server, db, OID) {
       socket.on('change sheet style', function (style) {
          console.log("changing sheet style");
          
-         sheets.update({"_id": socket.sheet},
+         var id = new OID(socket.sheet);
+         sheets.update({"_id": id},
                       {$set: {"style": style}})
             .then(function() {
                io.to(socket.sheet).emit('sheet style changed', style);
@@ -181,8 +182,8 @@ function connectSockets(server, db, OID) {
 
          console.log("writing \"", value, "\" to cell ",  cell);
          var id = new OID(socket.sheet);
-         sheets.update({"_id": socket.sheet}, 
-                       {$set: {["cells."+cell+".content"]: value}})
+         sheets.update({"_id": id}, 
+                       {"$set": {["cells."+cell+".content"]: value}})
             .then( function() {
                socket.to(socket.sheet).emit('cell written to', data);
                emitters[socket.sheet].emit(cell, sheets, io);

@@ -1,5 +1,6 @@
 var Parser = require('expr-eval').Parser;
 
+var mongo = require('./mongodb');
 var misc = require('./miscellaneous');
 
 function listener(sheetId, target, formula, args) {
@@ -14,7 +15,8 @@ function listener(sheetId, target, formula, args) {
                variables['x'+i] = vArgs[i];
             var newValue = parser.parse(formula).evaluate(variables);
 
-            sheet.update({"_id": sheetId}, 
+            var id = mongo.OID(sheetId);
+            sheet.update({"_id": id}, 
                          {$set: {["cells."+target+".content"]: newValue}})
                .then( () => {
                   var data = misc.cellToCoords(target);
