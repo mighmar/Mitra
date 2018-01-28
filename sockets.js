@@ -195,7 +195,9 @@ function connectSockets(server, db, OID) {
    
       socket.on('change cell style', function (data) {
          var style = data.style;
-         var cell = data.cell;
+         var coords = {row: data.row, col: data.col};
+         var cell = misc.coordsToCell(coords);
+
          console.log("changing style of cell ",  cell);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
