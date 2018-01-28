@@ -4,7 +4,7 @@ import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
-import {createSheet,openSheet} from './api';
+import {createSheet,openSheet, selectCell,onUserCellChange,selectCellUsers} from './api';
 import { withAuth } from '@okta/okta-react';
 
 
@@ -68,23 +68,20 @@ export default withAuth (class GridContent extends React.Component {
         }
         
     }
-
     }
-
-
 
     setSheetId(sheetId){
         this.setState({"spreadSheetId":[sheetId]});
     }
 
-    openSheetCallback = (sheetData)=>{
-        let userSelection = sheetData["users"];
-        /*let  userSelection = [
-            {'username':'Filip','col':"5",'row':5, 'color':'coral'},
-            {'username':'Marko','col':3,'row':2, 'color':'gold'}
-        ];*/
-
+    changeCellCallback = (cellInfo)=>{
+        let userSelection = cellInfo;
         this.setState({"userSelection":userSelection});
+        this.refreshUserStyles(userSelection);
+        //alert(JSON.stringify(cellInfo));
+    }
+
+    refreshUserStyles(userSelection){
         let userStyles={};
         for (const user in userSelection) {
                 const element = userSelection[user];
@@ -96,13 +93,26 @@ export default withAuth (class GridContent extends React.Component {
                 //alert(element.row+"  "+JSON.stringify(colObj))
                 userStyles[element.row]=colObj;
         }
+
+        this.setState({"userStyles":userStyles});
+
+    }
+
+    openSheetCallback = (sheetData)=>{
+        let userSelection = sheetData["users"];
+        /*let  userSelection = [
+            {'username':'Filip','col':"5",'row':5, 'color':'coral'},
+            {'username':'Marko','col':3,'row':2, 'color':'gold'}
+        ];*/
+
+        this.setState({"userSelection":userSelection});
+        this.refreshUserStyles(userSelection);
         //alert(JSON.stringify(userStyles));
         /*let userStyles = {
             12:{ "2":{'border-style':'solid', 'border-color':'green', 'border-width':'2px'}},
             4:{ 2:{'border-style':'solid', 'border-color':'coral','border-width':'2px'}},
             15:{ 7:{'border-style':'solid', 'border-color':'gold','border-width':'2px'}}
         };*/
-        this.setState({"userStyles":userStyles});
     }
 
     async componentDidMount(){
@@ -111,7 +121,8 @@ export default withAuth (class GridContent extends React.Component {
         let username="";
         try{
             username= JSON.stringify((await this.props.auth.getUser())["email"]);
-            
+            onUserCellChange(this.changeCellCallback.bind(this));
+
             //alert(this.props.match.params.sheetId);
             
             if(this.props.match ===undefined ||
@@ -152,13 +163,17 @@ export default withAuth (class GridContent extends React.Component {
 
     handleFocusChange= (i,j,event)=>{
         let key = event.target.id;
-        //provera da li je dozvoljena promena (poziv servera) 
         this.setState({
                         userRowCol:{
                             row:i,
                             col:j
                         }
         });
+        let message={
+            "col":j,
+            "row":i
+        };
+        selectCellUsers(message)
         //alert(JSON.stringify(this.state, null, 4));
     }
     handleFontChange= (font)=>{
