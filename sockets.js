@@ -159,14 +159,14 @@ function connectSockets(server, db, OID) {
                console.log("selecting cell ", cell);
  
                cursors[socket.sheet][socket.name].cell = cell;
-               var clone = Object.assign({}, cursors[socket.sheet]);
-               delete clone[socket.name];
                
-               var users = misc.cursorsToArray(clone); 
+               var users = misc.cursorsToArray(cursors[socket.sheet]); 
                io.to(socket.sheet).emit('cell selected', users);
             }
-            else 
+            else {
+               console.log("selection denied");
                socket.emit('selection denied');
+            }
          }
          catch (err) {
             console.error("select cell error");
