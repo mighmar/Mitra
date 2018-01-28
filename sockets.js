@@ -83,6 +83,7 @@ function connectSockets(server, db, OID) {
                socket.sheet = sheetId;
  
                if (io.sockets.adapter.rooms[sheetId].length == 1){
+                  console.log("First visitor: ", socket.name);
                   cursors[sheetId] = {};
                   colorPointer[sheetId] = 0; 
                   emitters[sheetId] = new events.EventEmitter();
