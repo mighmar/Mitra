@@ -47,14 +47,21 @@ class GridRow extends React.Component {
                 cellStyle = cellStyleRow===undefined? {}: cellStyleRow[el];
                 cellStyleFinal = cellStyle===undefined?{}: cellStyle;  
 
-                if(this.props.rowid==0 || el==0 || Object.keys(cellUserStyle).length!=0){
+                if(this.props.rowid==0 || el==0 || Object.keys(cellUserStyle).length!=0 && !(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col)){
                     return <td style={cellUserStyle} className={cellClass}>
                         <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true}  
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
                         {cellValue}
                     </div> </td>
                 }else if(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col){
-                    return <td className="userCell">
+                    let tdClass = "";
+                    if(Object.keys(cellUserStyle)!=0){
+                        cellStyleFinal={};
+                        tdClass="cellClass";
+
+                    }
+
+                    return <td className={tdClass} style={cellUserStyle}>
                     <input className="userCellText"  style={cellStyleFinal} id={this.props.rowid+"-"+el} type="text" value={cellValue} onChange={this.handleChange} onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}
                         onFocus={(e)=>{this.props.focusChangeHandler(this.props.rowid,el,e)}} />
                          </td>

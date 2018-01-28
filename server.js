@@ -12,7 +12,7 @@ var config  = require("./config").server;
 app.use(cors());
 app.set("port", config.port)
 
-var intervalID = setInterval(function(){console.log("I'm alive!");}, 50000);
+//var intervalID = setInterval(function(){console.log("I'm alive!");}, 50000);
 
 if (process.env.NODE_ENV === "production") 
    app.use(express.static("client/build"));

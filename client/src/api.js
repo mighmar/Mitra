@@ -17,10 +17,10 @@ function createSheet(sheetIdCall){
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
 
-function openSheet(sheetId,openSheetCallback){
+function openSheet(username, sheetId,openSheetCallback){
 let message={
     "sheetId":sheetId,
-    "name":"Filip"
+    "name":username
   };
   //alert(JSON.stringify(message));
   socket.emit("open sheet",message);

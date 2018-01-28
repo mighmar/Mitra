@@ -68,6 +68,7 @@ export default withAuth (class GridContent extends React.Component {
         }
         
     }
+    onUserCellChange(this.changeCellCallback.bind(this));
     }
 
     setSheetId(sheetId){
@@ -75,6 +76,7 @@ export default withAuth (class GridContent extends React.Component {
     }
 
     changeCellCallback = (cellInfo)=>{
+        //alert(JSON.stringify(cellInfo));
         let userSelection = cellInfo;
         this.setState({"userSelection":userSelection});
         this.refreshUserStyles(userSelection);
@@ -121,7 +123,7 @@ export default withAuth (class GridContent extends React.Component {
         let username="";
         try{
             username= JSON.stringify((await this.props.auth.getUser())["email"]);
-            onUserCellChange(this.changeCellCallback.bind(this));
+
 
             //alert(this.props.match.params.sheetId);
             
@@ -131,7 +133,7 @@ export default withAuth (class GridContent extends React.Component {
                 createSheet(this.setSheetId.bind(this));
             }
             else{
-                openSheet(this.props.match.params.sheetId, this.openSheetCallback.bind(this));
+                openSheet(username, this.props.match.params.sheetId, this.openSheetCallback.bind(this));
             }
         }catch(err){
 
