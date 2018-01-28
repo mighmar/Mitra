@@ -21,7 +21,7 @@ function connectSockets(server, db, OID) {
       console.log('Connected');
 
    
-      var addedUser = false;
+      var userJoined = false;
    
       /*
       socket.on('add user', function (name) {
@@ -54,6 +54,7 @@ function connectSockets(server, db, OID) {
                   io.to(sheetId).emit('user left', {
                      name: socket.name
                   }); 
+               enteredSheet = false;
             }
          }
          catch(e) {
@@ -182,7 +183,8 @@ function connectSockets(server, db, OID) {
                var users = cursorsToArray(cursors[sheetId]); 
                console.log("curses: ", cursors[sheetId], " => users: ", users);
                socket.emit('sheet data', {sheet: sheet, users: users, curses: cursors[sheetId]} );
-   
+ 
+               userJoined = true;
                io.to(sheetId).emit('user joined', {
                   name: socket.name,
                   cursor: cursors[sheetId][socket.name]
@@ -225,15 +227,24 @@ function connectSockets(server, db, OID) {
       });
    
       socket.on('select cell', function (coord) {
-         var cell = coordsToCell(coord);
-         console.log("selecting cell ", cell);
+         try {
+            if (userJoined) {
+               var cell = coordsToCell(coord);
+               console.log("selecting cell ", cell);
  
-         cursors[socket.sheet][socket.name].cell = cell;
-         var clone = Object.assign({}, cursors[socket.sheet]);
-         delete clone[socket.name];
-         
-         var users = cursorsToArray(clone); 
-         io.to(socket.sheet).emit('cell selected', users);
+               cursors[socket.sheet][socket.name].cell = cell;
+               var clone = Object.assign({}, cursors[socket.sheet]);
+               delete clone[socket.name];
+               
+               var users = cursorsToArray(clone); 
+               io.to(socket.sheet).emit('cell selected', users);
+            }
+            else 
+               socket.emit('selection denied');
+         }
+         catch (err) {
+            console.error("select cell error");
+         }
       });
    
       socket.on('write to cell', function (data) {
