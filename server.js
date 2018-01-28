@@ -7,7 +7,9 @@ var config  = require("./config").server;
     mongodb = require("./mongodb");
     sockets = require("./sockets");
  
-
+    process.on('uncaughtException', function (err) {
+        console.log(err);
+    }); 
 
 app.use(cors());
 app.set("port", config.port)
