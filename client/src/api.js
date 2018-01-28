@@ -17,19 +17,30 @@ function createSheet(sheetIdCall){
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
 
-function openSheet(username, sheetId,openSheetCallback){
-let message={
+function openSheet(username, sheetId){
+  let message={
     "sheetId":sheetId,
     "name":username
   };
   //alert(JSON.stringify(message));
   socket.emit("open sheet",message);
+}
+
+function globalOpenSheet(openSheetCallback){
   socket.on("sheet data",sheetData=> openSheetCallback(sheetData));
+
 }
 
 function onUserCellChange(changeCellCallback){
   socket.on("cell selected", cellInfo=> changeCellCallback(cellInfo));
 
+}
+
+function cellValueChange(data){
+  socket.emit("write to cell", data);
+}
+function globalCellValueChange(globalHandleCellValueChange){
+  socket.on("cell written to",data=>globalHandleCellValueChange(data) );
 }
 
 function selectCellUsers(cellCoord){
@@ -44,4 +55,4 @@ function closeSheet(sheetIdCall){
   socket.emit("create sheet",newSheet);
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
-export { addUser,createSheet,openSheet,onUserCellChange,selectCellUsers };
+export {globalCellValueChange,cellValueChange, addUser,createSheet,openSheet,onUserCellChange,selectCellUsers,globalOpenSheet};

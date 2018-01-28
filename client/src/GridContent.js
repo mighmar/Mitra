@@ -4,7 +4,7 @@ import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
-import {createSheet,openSheet, selectCell,onUserCellChange,selectCellUsers} from './api';
+import {globalCellValueChange,cellValueChange, globalOpenSheet, createSheet,openSheet, selectCell,onUserCellChange,selectCellUsers} from './api';
 import { withAuth } from '@okta/okta-react';
 
 
@@ -69,6 +69,8 @@ export default withAuth (class GridContent extends React.Component {
         
     }
     onUserCellChange(this.changeCellCallback.bind(this));
+    globalOpenSheet(this.openSheetCallback.bind(this));
+    globalCellValueChange(this.globalHandleCellValueChange.bind(this));
     }
 
     setSheetId(sheetId){
@@ -101,6 +103,7 @@ export default withAuth (class GridContent extends React.Component {
     }
 
     openSheetCallback = (sheetData)=>{
+        console.log("openSheetCallback");
         let userSelection = sheetData["users"];
         /*let  userSelection = [
             {'username':'Filip','col':"5",'row':5, 'color':'coral'},
@@ -133,7 +136,7 @@ export default withAuth (class GridContent extends React.Component {
                 createSheet(this.setSheetId.bind(this));
             }
             else{
-                openSheet(username, this.props.match.params.sheetId, this.openSheetCallback.bind(this));
+                openSheet(username, this.props.match.params.sheetId);
             }
         }catch(err){
 
@@ -142,7 +145,29 @@ export default withAuth (class GridContent extends React.Component {
     }
 
 
+    globalHandleCellValueChange=(data)=>{
+        let value = data.value;
+        if(data.col!==undefined && data.row!==undefined){
+            this.setState((previousState) => {
+                //console.log(i+" "+j+" "+value);
+            return update(previousState, {
+                grid:
+                { 
+                    [data.row]: {
+                        [data.col]:{$set:[value]}
+                        }
+                    }
+                }
+            )
+        }
+            );
+
+            //provera da li je dozvoljena promena (poziv servera) 
+        }
+    }
+
     handleCellValueChange= (i,j,event)=>{
+        
         let value = event.target.value;
         if(i!==undefined && j!==undefined){
             this.setState((previousState) => {
@@ -161,6 +186,13 @@ export default withAuth (class GridContent extends React.Component {
 
             //provera da li je dozvoljena promena (poziv servera) 
         }
+        let data={
+            "col":j,
+            "row":i,
+            "value":value
+        };
+        cellValueChange(data);
+        console.log("cell change");
     }
 
     handleFocusChange= (i,j,event)=>{
