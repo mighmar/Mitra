@@ -17,8 +17,8 @@ if (process.env.NODE_ENV === "production")
   
 var server = app.listen(app.get("port")); 
 
-/*console.log("connecting to mongo");
-mongodb.connect().then(db => {
+console.log("connecting to mongo");
+/*mongodb.connect().then(db => {
    console.log("connecting sockets");
    sockets.connect(server, db, mongodb.OID);
 
