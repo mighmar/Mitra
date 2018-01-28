@@ -163,7 +163,7 @@ function connectSockets(server, db, OID) {
  
                cursors[socket.sheet][socket.name].cell = cell;
                var clone = Object.assign({}, cursors[socket.sheet]);
-               delete clone[socket.name];
+               //delete clone[socket.name];
                
                var users = misc.cursorsToArray(clone); 
                io.to(socket.sheet).emit('cell selected', users);
