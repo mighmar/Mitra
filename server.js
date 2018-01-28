@@ -34,10 +34,10 @@ io.on('connection', function (socket) {
    socket.on('open sheet', function (data) { 
       console.log("User ", data.name, " Opening sheet ", data.sheetId);
       socket.emit('sheet data', {sheet: {}, users: [{username:"Pera", color: "red", row: 2, col: 2}]}); 
-   });
+   }
    socket.on('select cell', function (data) {
       console.log("Selecting cell ", data.row, ":", data.col);
       socket.emit('cell selected', [{username:"Pera", color: "red", row: peraRow++, col: 2}]);
-   });
-});
+   }
+}
 
