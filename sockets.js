@@ -182,7 +182,7 @@ function connectSockets(server, db, OID) {
    
       socket.on('write to cell', function (data) {
          var value = data.value;
-         var coords = {row: data.row, col: data.col};
+         var coords = {"row": data.row, "col": data.col};
          var cell = misc.coordsToCell(coords);
 
          console.log("writing \"", value, "\" to cell ",  cell);
@@ -204,10 +204,10 @@ function connectSockets(server, db, OID) {
          var coords = {"row": data.row, "col": data.col};
          var cell = misc.coordsToCell(coords);
 
-         console.log("changing style of cell ",  cell);
+         console.log("changing style of cell ",  data);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
-                       {$set: {["cells"+cell+".style"]: value}})
+                       {$set: {["cells"+cell+".style"]: style}})
             .then( function() {
                socket.to(socket.sheet).emit('cell changed syle', data);
             })
