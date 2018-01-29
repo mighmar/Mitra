@@ -38,6 +38,7 @@ function connectSockets(server, db, OID) {
                   delete emitters[socket.sheet];
                   delete colorPointer[socket.sheet];
                }
+               
                else { 
                   var clone = Object.assign({}, cursors[socket.sheet]);
                   delete clone[socket.name];
@@ -83,6 +84,7 @@ function connectSockets(server, db, OID) {
                socket.join(sheetId);      
                socket.sheet = sheetId;
  
+               console.log(io.sockets.adapter.rooms[sheetId].length, " users already on the sheet"){
                if (io.sockets.adapter.rooms[sheetId].length == 1){
                   console.log("First visitor: ", socket.name);
                   cursors[sheetId] = {};
