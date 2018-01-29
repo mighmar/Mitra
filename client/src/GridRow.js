@@ -31,7 +31,7 @@ class GridRow extends React.Component {
         let cellStyleFinal={};
         let renderUserStyle = this.props.rowUserStyles==undefined?{}:this.props.rowUserStyles; //{ 'border-style':'solid', 'border-color':'lightBlue'};
         let renderValue=this.props.rowValues==undefined?{}:this.props.rowValues;
-        
+        //console.log(JSON.stringify(this.props.rowUserStyles));
         return(<tr>
             {this.arrayIndex.map(el=>{
                 cellClass = "defaultCell"

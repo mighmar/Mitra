@@ -79,6 +79,8 @@ export default withAuth (class GridContent extends React.Component {
 
     changeCellCallback = (cellInfo)=>{
         //alert(JSON.stringify(cellInfo));
+        console.log("changeCellCallback");
+        console.log(JSON.stringify(cellInfo));
         let userSelection = cellInfo;
         this.setState({"userSelection":userSelection});
         this.refreshUserStyles(userSelection);
@@ -90,12 +92,15 @@ export default withAuth (class GridContent extends React.Component {
         for (const user in userSelection) {
                 const element = userSelection[user];
                 let colObj={};
-                colObj[element.col]={};
-                colObj[element.col]["border-style"]="solid";
-                colObj[element.col]["border-color"]=element.color;
-                colObj[element.col]["border-width"]="2px";
+                colObj={};
+                colObj["border-style"]="solid";
+                colObj["border-color"]=element.color;
+                colObj["border-width"]="2px";
                 //alert(element.row+"  "+JSON.stringify(colObj))
-                userStyles[element.row]=colObj;
+                if(userStyles[element.row]===undefined){
+                    userStyles[element.row]={};
+                }
+                userStyles[element.row][element.col]=colObj;
         }
 
         this.setState({"userStyles":userStyles});
