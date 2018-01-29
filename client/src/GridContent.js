@@ -80,8 +80,6 @@ export default withAuth (class GridContent extends React.Component {
 
     changeCellCallback = (cellInfo)=>{
         //alert(JSON.stringify(cellInfo));
-        console.log("changeCellCallback");
-        console.log(JSON.stringify(cellInfo));
         let userSelection = cellInfo;
         this.setState({"userSelection":userSelection});
         this.refreshUserStyles(userSelection);
@@ -109,7 +107,6 @@ export default withAuth (class GridContent extends React.Component {
     }
 
     openSheetCallback = (sheetData)=>{
-        console.log("openSheetCallback");
         console.log(JSON.stringify(sheetData));
         let userSelection = sheetData["users"];
         /*let  userSelection = [
@@ -218,7 +215,6 @@ export default withAuth (class GridContent extends React.Component {
             "value":value
         };
         cellValueChange(data);
-        console.log("cell change");
     }
     
 
@@ -258,7 +254,6 @@ export default withAuth (class GridContent extends React.Component {
                 "col":j,
                 "style":dataStyle
             };
-            console.log(JSON.stringify(previousState["gridStyles"]));
 
             cellStyleChange(data);
             return newStyle;
