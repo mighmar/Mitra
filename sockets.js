@@ -218,7 +218,7 @@ function connectSockets(server, db, OID) {
       });
 
       socket.on('visited sheets', function (name) {
-         sheets.find({"visitors": socket.name}).project({}).toArray()
+         sheets.find({"visitors": socket.name}).project({"name": 1}).toArray()
             .then(function(data) {
                socket.emit('sheets visited', data);
             });
