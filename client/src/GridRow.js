@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { cellStyleChange } from './api';
 
 const indexArray = function indexArray(len){
     let array = new Array(len);
@@ -22,6 +23,13 @@ class GridRow extends React.Component {
         this.setState({key:event.target.innerHTML});
     }
     arrayIndex = indexArray(27);
+    extend=function(extended, obj){
+        for (const key in obj) {
+             var element = obj[key];
+             extended[key]=element;   
+        }
+        return extended;
+    }
     render() {
         let cellClass = "defaultCell";
         let cellValue = "";
@@ -41,14 +49,24 @@ class GridRow extends React.Component {
                     cellClass = "firstRowCell";
                 } 
                 cellValue = renderValue[el]==undefined?"":renderValue[el];
+                //stil korisnika
                 cellUserStyle = renderUserStyle[el]==undefined?{}:renderUserStyle[el];
-
+                
                 cellStyleRow = this.props.gridStyles[this.props.rowid];
                 cellStyle = cellStyleRow===undefined? {}: cellStyleRow[el];
-                cellStyleFinal = cellStyle===undefined?{}: cellStyle;  
+                //console.log(JSON.stringify(cellUserStyle));
+
+                cellStyle = cellStyle===undefined?{}: cellStyle;  
+                cellStyleFinal= {};
+                cellStyleFinal = this.extend(cellStyleFinal, cellUserStyle);
+                cellStyleFinal= this.extend(cellStyleFinal,cellStyle);
+                //console.log(JSON.stringify(cellStyleFinal));
+
 
                 if(this.props.rowid==0 || el==0 || Object.keys(cellUserStyle).length!=0 && !(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col)){
-                    return <td style={cellUserStyle} className={cellClass}>
+                    
+                    
+                    return <td style={cellStyleFinal} className={cellClass}>
                         <div id={this.props.rowid+"-"+el} suppressContentEditableWarning={true}  
                         onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}>
                         {cellValue}
@@ -56,13 +74,13 @@ class GridRow extends React.Component {
                 }else if(this.props.userRowCol.row===this.props.rowid && el===this.props.userRowCol.col){
                     let tdClass = "";
                     if(Object.keys(cellUserStyle)!=0){
-                        cellStyleFinal={};
+                        //cellStyleFinal={};
                         tdClass="cellClass";
 
                     }
 
-                    return <td className={tdClass} style={cellUserStyle}>
-                    <input className="userCellText"  style={cellStyleFinal} id={this.props.rowid+"-"+el} type="text" value={cellValue} onChange={this.handleChange} onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}
+                    return <td className={tdClass} >
+                    <input className="userCellText" style={cellStyleFinal}  id={this.props.rowid+"-"+el} type="text" value={cellValue} onChange={this.handleChange} onInput={(e)=>{this.props.cellChangeHandler(this.props.rowid,el,e)}}
                         onFocus={(e)=>{this.props.focusChangeHandler(this.props.rowid,el,e)}} />
                          </td>
                 }else{
