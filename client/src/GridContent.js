@@ -4,7 +4,7 @@ import './App.css';
 import GridRow from './GridRow';
 import StylePanel from './StylePanel';
 import update from 'react-addons-update';
-import {globalCellValueChange,cellValueChange, globalOpenSheet, createSheet,openSheet, selectCell,onUserCellChange,selectCellUsers} from './api';
+import {globalCellStyleChange , cellStyleChange,globalCellValueChange,cellValueChange, globalOpenSheet, createSheet,openSheet, selectCell,onUserCellChange,selectCellUsers} from './api';
 import { withAuth } from '@okta/okta-react';
 
 
@@ -71,7 +71,8 @@ export default withAuth (class GridContent extends React.Component {
     onUserCellChange(this.changeCellCallback.bind(this));
     globalOpenSheet(this.openSheetCallback.bind(this));
     globalCellValueChange(this.globalHandleCellValueChange.bind(this));
-    }
+    globalCellStyleChange(this.globalHandleCellStyleChange.bind(this));
+}
 
     setSheetId(sheetId){
         this.setState({"spreadSheetId":[sheetId]});
@@ -109,6 +110,7 @@ export default withAuth (class GridContent extends React.Component {
 
     openSheetCallback = (sheetData)=>{
         console.log("openSheetCallback");
+        console.log(JSON.stringify(sheetData));
         let userSelection = sheetData["users"];
         /*let  userSelection = [
             {'username':'Filip','col':"5",'row':5, 'color':'coral'},
@@ -148,7 +150,26 @@ export default withAuth (class GridContent extends React.Component {
         }
         
     }
+    globalHandleCellStyleChange=(data)=>{
+        let value = data.style;
+        if(data.col!==undefined && data.row!==undefined){
+            this.setState((previousState) => {
+                //console.log(i+" "+j+" "+value);
+            return update(previousState, {
+                gridStyles:
+                { 
+                    [data.row]: {
+                        [data.col]:{$set:value}
+                        }
+                    }
+                }
+            )
+        }
+            );
 
+            //provera da li je dozvoljena promena (poziv servera) 
+        }
+    }
 
     globalHandleCellValueChange=(data)=>{
         let value = data.value;
@@ -199,6 +220,7 @@ export default withAuth (class GridContent extends React.Component {
         cellValueChange(data);
         console.log("cell change");
     }
+    
 
     handleFocusChange= (i,j,event)=>{
         let key = event.target.id;
@@ -216,19 +238,30 @@ export default withAuth (class GridContent extends React.Component {
         //alert(JSON.stringify(this.state, null, 4));
     }
     handleFontChange= (font)=>{
+        let fontV = font.value;
         let i=this.state.userRowCol.row;
         let j= this.state.userRowCol.col;
         if(i!==undefined && j!==undefined){
             this.setState((previousState) => {
-            return update(previousState, {
+            let newStyle = update(previousState, {
                 gridStyles:
                 { 
                     [i]: {
-                        [j]:{"font-family": {$set:[font["value"]]}
+                        [j]:{"font-family": {$set:font["value"]}
                         }
                     }
                 }
-            })
+            });
+            let dataStyle=newStyle["gridStyles"][i][j];
+            let data={
+                "row":i,
+                "col":j,
+                "style":dataStyle
+            };
+            console.log(JSON.stringify(previousState["gridStyles"]));
+
+            cellStyleChange(data);
+            return newStyle;
         }
             );
 
@@ -242,20 +275,31 @@ export default withAuth (class GridContent extends React.Component {
         let j= this.state.userRowCol.col;
         if(i!==undefined && j!==undefined){
             this.setState((previousState) => {
-            return update(previousState, {
+            let newStyle = update(previousState, {
                 gridStyles:
                 { 
                     [i]: {
-                        [j]:{"background-color": {$set:[color.hex]}
+                        [j]:{"background-color": {$set:color.hex}
                         }
                     }
                 }
-            })
+            });
+            let dataStyle=newStyle["gridStyles"][i][j];
+            let data={
+                "row":i,
+                "col":j,
+                "style":dataStyle
+            };
+            console.log(JSON.stringify(previousState["gridStyles"]));
+
+            cellStyleChange(data);
+            return newStyle;
         }
             );
 
             //provera da li je dozvoljena promena (poziv servera) 
         }
+
     }
 
     toggleStateValue (){

@@ -39,12 +39,20 @@ function onUserCellChange(changeCellCallback){
 function cellValueChange(data){
   socket.emit("write to cell", data);
 }
+
+function cellStyleChange(data){
+  socket.emit("change cell style", data);
+}
+
 function globalCellValueChange(globalHandleCellValueChange){
   socket.on("cell written to",data=>globalHandleCellValueChange(data) );
 }
 
+function globalCellStyleChange(globalHandleCellStyleChange){
+  socket.on("cell changed syle",data=>{ globalHandleCellStyleChange(data); });
+}
+
 function selectCellUsers(cellCoord){
-  console.log("saljem");
   socket.emit("select cell",cellCoord);
 }
 
@@ -55,4 +63,4 @@ function closeSheet(sheetIdCall){
   socket.emit("create sheet",newSheet);
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
-export {globalCellValueChange,cellValueChange, addUser,createSheet,openSheet,onUserCellChange,selectCellUsers,globalOpenSheet};
+export {globalCellStyleChange , cellStyleChange, globalCellValueChange,cellValueChange, addUser,createSheet,openSheet,onUserCellChange,selectCellUsers,globalOpenSheet};
