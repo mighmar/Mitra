@@ -107,7 +107,64 @@ export default withAuth (class GridContent extends React.Component {
     }
 
     openSheetCallback = (sheetData)=>{
-        console.log(JSON.stringify(sheetData));
+        //console.log(JSON.stringify(sheetData));
+        let cellValues = sheetData.sheet.cells;
+        for (const key in cellValues) {
+            const element = cellValues[key];
+            let i=element.row;
+            let j=element.col;
+            let value = element.value;
+            this.setState((previousState) => {
+                //console.log(i+" "+j+" "+value);
+            return update(previousState, {
+                grid:
+                { 
+                    [i]: {
+                        [j]:{$set:[value]}
+                        }
+                    }
+                }
+            )
+        }
+            );
+        }
+        for (const key in cellValues) {
+            const element = cellValues[key];
+            let i=element.row;
+            let j=element.col;
+            let value = element.value;
+            let style = element.style;
+            if(value!== undefined){
+                this.setState((previousState) => {
+                    //console.log(i+" "+j+" "+value);
+                return update(previousState, {
+                            grid:
+                            { 
+                                [i]: {
+                                    [j]:{$set:[value]}
+                                    }
+                                }
+                            }
+                        )
+                }
+                );
+            }
+            if(style!==undefined){
+                this.setState((previousState) => {
+                    //console.log(i+" "+j+" "+value);
+                return update(previousState, {
+                            gridStyles:
+                            { 
+                                [i]: {
+                                    [j]:{$set:style}
+                                    }
+                                }
+                            }
+                        )
+                }
+                );
+            }
+        }
         let userSelection = sheetData["users"];
         /*let  userSelection = [
             {'username':'Filip','col':"5",'row':5, 'color':'coral'},
@@ -285,8 +342,6 @@ export default withAuth (class GridContent extends React.Component {
                 "col":j,
                 "style":dataStyle
             };
-            console.log(JSON.stringify(previousState["gridStyles"]));
-
             cellStyleChange(data);
             return newStyle;
         }
