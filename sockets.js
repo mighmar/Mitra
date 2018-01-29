@@ -32,7 +32,6 @@ function connectSockets(server, db, OID) {
                var sheetId = socket.sheet;
             
                delete cursors[socket.sheet][socket.name];
-               console.log(io.sockets.adapter.rooms[sheetId].length, " users remaining");
                if (io.sockets.adapter.rooms[sheetId].length == 0){
                   console.log("Last user leaving sheet: ", socket.sheet);
                   delete cursors[socket.sheet];
@@ -41,10 +40,7 @@ function connectSockets(server, db, OID) {
                }
                
                else { 
-                  var clone = Object.assign({}, cursors[socket.sheet]);
-                  delete clone[socket.name];
-                  
-                  var users = misc.cursorsToArray(clone); 
+                  var users = misc.cursorsToArray(cursors[socket.sheet]); 
                   socket.to(socket.sheet).emit('user left', users);
                }
                userJoined = false;
@@ -79,7 +75,7 @@ function connectSockets(server, db, OID) {
 
          var id = new OID(sheetId);
 
-         sheets.findOne({"_id" : id})
+         sheets.findOne({"_id" : id}, { _id: 0})
             .then(function(sheet) {
                socket.name = name;
                socket.join(sheetId);      
@@ -103,6 +99,9 @@ function connectSockets(server, db, OID) {
                cursors[sheetId][socket.name] = {};
                cursors[sheetId][socket.name].color = color;
                cursors[sheetId][socket.name].cell = undefined;
+
+
+	       sheet.cells = misc.cellsToArray(sheet.cells);
 
                var users = misc.cursorsToArray(cursors[sheetId]); 
                console.log("curses: ", cursors[sheetId], " => users: ", users);
@@ -183,7 +182,7 @@ function connectSockets(server, db, OID) {
    
       socket.on('write to cell', function (data) {
          var value = data.value;
-         var coords = {row: data.row, col: data.col};
+         var coords = {"row": data.row, "col": data.col};
          var cell = misc.coordsToCell(coords);
 
          console.log("writing \"", value, "\" to cell ",  cell);
@@ -205,10 +204,10 @@ function connectSockets(server, db, OID) {
          var coords = {"row": data.row, "col": data.col};
          var cell = misc.coordsToCell(coords);
 
-         console.log("changing style of cell ",  cell);
+         console.log("changing style of cell ",  data);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
-                       {$set: {["cells"+cell+".style"]: value}})
+                       {$set: {["cells"+cell+".style"]: style}})
             .then( function() {
                socket.to(socket.sheet).emit('cell changed syle', data);
             })
