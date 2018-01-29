@@ -207,7 +207,7 @@ function connectSockets(server, db, OID) {
          console.log("changing style of cell ",  data);
          var id = new OID(socket.sheet);
          sheets.update({"_id": id}, 
-                       {$set: {["cells"+cell+".style"]: style}})
+                       {$set: {["cells."+cell+".style"]: style}})
             .then( function() {
                socket.to(socket.sheet).emit('cell changed syle', data);
             })
