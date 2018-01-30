@@ -228,6 +228,7 @@ function connectSockets(server, db, OID) {
          var coords = {"row": data.row, "col": data.col};
          var formula = data.formula;
          var target = misc.coordsToCell(coords);
+         console.log("Setting function " target, " = ", data.formula);
 
          var fun = functions.parse(formula);
          fun.target = target;
