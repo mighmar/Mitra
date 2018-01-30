@@ -71,7 +71,7 @@ function connectSockets(server, db, OID) {
    
       socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
-         console.log("Opening sheet: ", sheetId, ", User: ", name, ")");
+         console.log("Opening sheet: ", sheetId, ", User: ", name, ", Test: ", data.test, ")");
 
          var id = new OID(sheetId);
 
