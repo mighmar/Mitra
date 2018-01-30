@@ -7,8 +7,15 @@ var config  = require("./config").server;
     sockets = require("./sockets");
 
 
+app.use(cors(credentials:true, origin:true));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept-Type');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+})
 app.set("port", config.port)
-app.use(cors());
+//app.use(cors());
   
 var server = app.listen(app.get("port")); 
 
