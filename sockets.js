@@ -221,7 +221,12 @@ function connectSockets(server, db, OID) {
          console.log("Listing visited sheets for user ", socket.name);
          sheets.find({"visitors": socket.name}).project({"name": 1}).toArray()
             .then(function(data) {
+               console.log("   Sending sheets ", data);
                socket.emit('sheets visited', data);
+            })
+            .catch(function(err) {
+               console.error("Visited sheets error: ", err);
+               socket.emit('visited sheets error');
             });
       });
 
