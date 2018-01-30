@@ -1,6 +1,7 @@
 var mongodb = require( 'mongodb' );
 var MongoClient = mongodb.MongoClient;
 var util = require('util');
+
 var config = require('./config').mongodb;
 var _db;
 
