@@ -20,6 +20,8 @@ function connectSockets(server, db, OID) {
    var colorPointer = {};
    var emitters = {};
 
+   io.origins('*:*');
+
    io.on('connection', function (socket) {
       console.log('Connected');
       var userJoined = false;
