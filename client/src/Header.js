@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom'
 import logo from './Images/MitraHeader.png';
 import './App.css';
 import { withAuth } from '@okta/okta-react';
-
-
+import {createSheet} from './api';
 
 export default withAuth(class Header extends React.Component {
   constructor(props) {
@@ -19,8 +18,11 @@ export default withAuth(class Header extends React.Component {
     if (authenticated !== this.state.authenticated) {
       this.setState({ authenticated });
     }
-  }
 
+  }
+  setSheetId(sheetId){
+    this.props.history.push('/grid/'+sheetId);
+  }
   componentDidUpdate() {
     this.checkAuthentication();
   }
@@ -42,9 +44,14 @@ export default withAuth(class Header extends React.Component {
             <div className="col-lg-9 col-lg-9 col-xl-9" >
               <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1">
-                <Link to="grid">
+                
+                
                   <div className="btnNew" data-tip="New spreadsheet"  
-                    /*onClick={ ()=>{this.props.changePage("Grid")}}*/> </div></Link>
+                  onClick={() => {
+                    createSheet(this.setSheetId.bind(this)); }}
+                    /*onClick={ ()=>{this.props.changePage("Grid")}}*/>
+
+                  </div>
                 </div>
                 <div className="col-lg-1 col-lg-1 col-xl-1" >
                   <Link to="/existing">

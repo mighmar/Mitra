@@ -47,7 +47,9 @@ export default withAuth (class LoadExistingContent extends React.Component {
                 this.state.sheetLinks.map(it=>
                 {
                     return (
-                        <Link to={"grid/"+it["_id"]}> {it["name"]["name"]} </Link>)
+                        <div>
+                        <Link to={"grid/"+it["_id"]}> {it["name"]["name"]} </Link> <br/>
+                        </div>)
                 })
             }
         </div>

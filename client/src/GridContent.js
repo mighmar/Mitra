@@ -74,9 +74,7 @@ export default withAuth (class GridContent extends React.Component {
     globalCellStyleChange(this.globalHandleCellStyleChange.bind(this));
 }
 
-    setSheetId(sheetId){
-        this.setState({"spreadSheetId":[sheetId]});
-    }
+
 
     changeCellCallback = (cellInfo)=>{
         //alert(JSON.stringify(cellInfo));
@@ -191,14 +189,9 @@ export default withAuth (class GridContent extends React.Component {
 
             //alert(this.props.match.params.sheetId);
             
-            if(this.props.match ===undefined ||
-                this.props.match.params===undefined ||
-                this.props.match.params.sheetId===undefined){
-                createSheet(this.setSheetId.bind(this));
-            }
-            else{
+
                 openSheet(username, this.props.match.params.sheetId);
-            }
+
         }catch(err){
 
         }
