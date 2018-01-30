@@ -33,7 +33,7 @@ function connectSockets(server, db, OID) {
             
                delete cursors[socket.sheet][socket.name];
                if (io.sockets.adapter.rooms[sheetId].length == 0){
-                  console.log("Last user leaving sheet: ", socket.sheet);
+                  console.log("   Last user leaving sheet: ", socket.sheet);
                   delete cursors[socket.sheet];
                   delete emitters[socket.sheet];
                   delete colorPointer[socket.sheet];
@@ -83,7 +83,7 @@ function connectSockets(server, db, OID) {
  
                console.log(io.sockets.adapter.rooms[sheetId].length, " users on the sheet")
                if (io.sockets.adapter.rooms[sheetId].length == 1){
-                  console.log("First visitor: ", socket.name);
+                  console.log("   First visitor: ", socket.name);
                   cursors[sheetId] = {};
                   colorPointer[sheetId] = 0; 
                   emitters[sheetId] = new events.EventEmitter();
@@ -171,7 +171,7 @@ function connectSockets(server, db, OID) {
                io.to(socket.sheet).emit('cell selected', users);
             }
             else {
-               console.log("selection denied");
+               console.log("   selection denied");
                socket.emit('selection denied');
             }
          }
@@ -218,8 +218,8 @@ function connectSockets(server, db, OID) {
       });
 
       socket.on('visited sheets', function (name) {
-         console.log("Listing visited sheets for user ", socket.name);
-         sheets.find({"visitors": socket.name}).project({"name": 1}).toArray()
+         console.log("Listing visited sheets for user ", name);
+         sheets.find({"visitors": name}).project({"name": 1}).toArray()
             .then(function(data) {
                console.log("   Sending sheets ", data);
                socket.emit('sheets visited', data);
