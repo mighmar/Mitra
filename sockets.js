@@ -110,13 +110,15 @@ function connectSockets(server, db, OID) {
                userJoined = true;
                socket.to(sheetId).emit('user joined', users);
 
-               if (!sheet.visitors.includes(socket.name)) {
+            ){
+               if (typeof sheet.visitors !== 'undefined' 
+                     && !sheet.visitors.includes(socket.name)) {
                   sheets.update({"_id": id}, 
                                 {"$push": {"visitors": socket.name}
                   })
-                     .catch(function () {
-                        console.error("Mark visitor error");
-                     });
+                  .catch(function () {
+                     console.error("Mark visitor error");
+                  });
                }
                   
             })
