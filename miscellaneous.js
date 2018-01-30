@@ -73,7 +73,20 @@ function cursorsToArray (curses) {
    return result;
 }
 
+function cellsToArray (cells) {
+   var res = [];
+   var newCell = {};
+   for (c in cells){
+      newCell = cellToCoords(c);
+      newCell.value = cells[c].content;
+      newCell.style = cells[c].style;
+      res.push(newCell);
+   }
+   return res; 
+}
+
 exports.setFunctionListeners = setFunctionListeners;
 exports.cellToCoords = cellToCoords;
 exports.coordsToCell = coordsToCell;
 exports.cursorsToArray = cursorsToArray;
+exports.cellsToArray = cellsToArray;

@@ -2,20 +2,13 @@ var express = require("express"),
     app     = express(),
     cors    = require("cors");
 
-
 var config  = require("./config").server;
     mongodb = require("./mongodb");
     sockets = require("./sockets");
- 
 
 
-app.use(cors());
 app.set("port", config.port)
-
-//var intervalID = setInterval(function(){console.log("I'm alive!");}, 50000);
-
-if (process.env.NODE_ENV === "production") 
-   app.use(express.static("client/build"));
+app.use(cors());
   
 var server = app.listen(app.get("port")); 
 
