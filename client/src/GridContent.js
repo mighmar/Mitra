@@ -186,7 +186,7 @@ export default withAuth (class GridContent extends React.Component {
 
         let username="";
         try{
-            username= JSON.stringify((await this.props.auth.getUser())["email"]);
+            username= (await this.props.auth.getUser())["email"];
 
 
             //alert(this.props.match.params.sheetId);
