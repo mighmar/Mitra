@@ -32,7 +32,8 @@ function connectSockets(server, db, OID) {
                var sheetId = socket.sheet;
             
                delete cursors[socket.sheet][socket.name];
-               if (io.sockets.adapter.rooms[sheetId].length == 0){
+               if (typeof io.sockets.adapter.rooms[sheetId] == 'undefined'
+                  || io.sockets.adapter.rooms[sheetId].length == 0){
                   console.log("   Last user leaving sheet: ", socket.sheet);
                   delete cursors[socket.sheet];
                   delete emitters[socket.sheet];
