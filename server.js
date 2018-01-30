@@ -2,7 +2,6 @@ var express = require("express"),
     app     = express(),
     cors    = require("cors");
 
-
 var config  = require("./config").server;
     mongodb = require("./mongodb");
     sockets = require("./sockets");
