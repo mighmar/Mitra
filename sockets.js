@@ -110,6 +110,7 @@ function connectSockets(server, db, OID) {
                userJoined = true;
                socket.to(sheetId).emit('user joined', users);
 
+               console.log("Sheet visitors: ", sheet.visitors);
                if (typeof sheet.visitors !== 'undefined' 
                      && !sheet.visitors.includes(socket.name)) {
                   sheets.update({"_id": id}, 
