@@ -396,13 +396,6 @@ export default withAuth (class GridContent extends React.Component {
             <div className="row">
                 <div className="col-lg-1 col-lg-1 col-xl-1 gridToolbar" >
                     <div className="row centerFlex">
-                            <div className="btnSplit" data-tip="Split cell"></div>
-                            
-                    </div>
-                    <div className="row centerFlex">
-                            <div className="btnMerge" data-tip="Merge cells"></div>
-                    </div>
-                    <div className="row centerFlex">
                             <div className="btnFunction" data-tip="Functions documentation"></div>
                     </div>
                     <div className="row centerFlex">

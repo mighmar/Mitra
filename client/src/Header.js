@@ -51,11 +51,6 @@ export default withAuth(class Header extends React.Component {
                   <div className="btnExisting" data-tip="Open existing spreadsheet"
                     /*onClick={ ()=>{this.props.changePage("Existing")}}*/><Link to="existing"/></div> </Link>
                 </div>
-                <div className="col-lg-1 col-lg-1 col-xl-1">
-                  <Link to="/configuration">
-                  <div className="btnGear" data-tip="Configuration" 
-                    /*onClick={ ()=>{this.props.changePage("Configuration")}}*/><Link to="configuration"/></div> </Link>
-                </div>
                 <div className="col-lg-8 col-lg-8 col-xl-8">
                 </div>
                 <div className="col-lg-1 col-lg-1 col-xl-1">

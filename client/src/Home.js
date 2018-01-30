@@ -37,10 +37,10 @@ export default withAuth(class Home extends Component {
       if(this.state.authenticated){
         return(
             <div>
-                <ContentRow heading="Recent"/>
-                <ContentRow heading="Team log"/>
                 <ContentRow heading="Introduction"
                     contentText="Mitra is a lightweight, opensource, online spreadsheet manipulation application that enables simultaneous work on the same sheet by multiple users. It uses React.js and Node.js as main technologies."/>
+
+                <ContentRow heading="Team log"/>
             </div>);
       }else{
         return (

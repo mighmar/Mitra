@@ -53,7 +53,6 @@ function globalCellStyleChange(globalHandleCellStyleChange){
 }
 
 function visitedSheets(username){
-  alert(username);
   socket.emit("visited sheets",username);
 
 }
