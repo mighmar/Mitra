@@ -8,8 +8,8 @@ var config  = require("./config").server;
     sockets = require("./sockets");
 
 
-app.use(cors());
 app.set("port", config.port)
+app.use(cors());
   
 var server = app.listen(app.get("port")); 
 
