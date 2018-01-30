@@ -26,35 +26,6 @@ function connectSockets(server, db, OID) {
       console.log('Connected');
       var userJoined = false;
    
-      socket.on('disconnect', function () {
-         console.log("Disconnecting");
-
-         try {
-            if (typeof socket.sheet !== 'undefined'){
-               var sheetId = socket.sheet;
-            
-               delete cursors[socket.sheet][socket.name];
-               if (typeof io.sockets.adapter.rooms[sheetId] == 'undefined'
-                  || io.sockets.adapter.rooms[sheetId].length == 0){
-                  console.log("   Last user leaving sheet: ", socket.sheet);
-                  delete cursors[socket.sheet];
-                  delete emitters[socket.sheet];
-                  delete colorPointer[socket.sheet];
-               }
-               
-               else { 
-                  var users = misc.cursorsToArray(cursors[socket.sheet]); 
-                  socket.to(socket.sheet).emit('user left', users);
-               }
-               userJoined = false;
-            }
-            else 
-               socket.emit('disconnect denied'); 
-         }
-         catch(e) {
-            console.error("Disconnect error", e);
-         }
-      });
    
       socket.on('create sheet', function (sheetName) {
          console.log("Creating sheet: ", sheetName);
@@ -70,7 +41,38 @@ function connectSockets(server, db, OID) {
             }); 
       });
 
+      socket.on('visited sheets', function (name) {
+         console.log("Listing visited sheets for user ", name);
+         sheets.find({"visitors": name}).project({"name": 1}).toArray()
+            .then(function(data) {
+               console.log("   Sending sheets ", data);
+               socket.emit('sheets visited', data);
+            })
+            .catch(function(err) {
+               console.error("Visited sheets error: ", err);
+               socket.emit('visited sheets error');
+            });
+      });
 
+      socket.on('get collaborators', function (name) {
+         console.log("Listing collaborators for user ", name);
+         sheets.find({"visitors": name})
+            .project({"_id": 0, "visitors": 1}).toArray()
+            .then(function(data) {
+               console.log("   Finding collaborators in ", data);
+
+               var collabsSet = {};
+               for (v in data.visitors)
+                  collabsSet[v] = undefined;
+
+               var collabs = Object.keys(collabsSet); 
+               socket.emit('collaborators', collabs);
+            })
+            .catch(function(err) {
+               console.error("Get collaborators error: ", err);
+               socket.emit('get collaborators error');
+            });
+      }); 
    
       socket.on('open sheet', function (data) {
          var sheetId = data.sheetId, name = data.name;
@@ -129,25 +131,6 @@ function connectSockets(server, db, OID) {
     
       }); 
    
-/*
-      socket.on('close sheet', function () {
-         console.log("closing sheet");
-    
-         var sheetId = socket.sheet;
-         socket.leave(sheetId);      
-         socket.sheet = undefined;
-         delete cursors[sheetId][socket.name];
-         if (io.sockets.adapter.rooms[sheetId].length == 1){
-            delete cursors[sheetId];
-            delete emitters[sheetId];
-            delete colorPointer[sheetId];
-         }
-         else 
-            socket.to(sheetId).emit('user left', {
-               name: socket.name
-            }); 
-      }); 
-*/
    
       socket.on('change sheet style', function (style) {
          console.log("changing sheet style");
@@ -222,18 +205,6 @@ function connectSockets(server, db, OID) {
             }); 
       });
 
-      socket.on('visited sheets', function (name) {
-         console.log("Listing visited sheets for user ", name);
-         sheets.find({"visitors": name}).project({"name": 1}).toArray()
-            .then(function(data) {
-               console.log("   Sending sheets ", data);
-               socket.emit('sheets visited', data);
-            })
-            .catch(function(err) {
-               console.error("Visited sheets error: ", err);
-               socket.emit('visited sheets error');
-            });
-      });
 
       socket.on('set function', function (data) {
          var coords = {"row": data.row, "col": data.col};
@@ -261,6 +232,36 @@ function connectSockets(server, db, OID) {
          });
 
       }); 
+
+      socket.on('disconnect', function () {
+         console.log("Disconnecting");
+
+         try {
+            if (typeof socket.sheet !== 'undefined'){
+               var sheetId = socket.sheet;
+            
+               delete cursors[socket.sheet][socket.name];
+               if (typeof io.sockets.adapter.rooms[sheetId] == 'undefined'
+                  || io.sockets.adapter.rooms[sheetId].length == 0){
+                  console.log("   Last user leaving sheet: ", socket.sheet);
+                  delete cursors[socket.sheet];
+                  delete emitters[socket.sheet];
+                  delete colorPointer[socket.sheet];
+               }
+               
+               else { 
+                  var users = misc.cursorsToArray(cursors[socket.sheet]); 
+                  socket.to(socket.sheet).emit('user left', users);
+               }
+               userJoined = false;
+            }
+            else 
+               socket.emit('disconnect denied'); 
+         }
+         catch(e) {
+            console.error("Disconnect error", e);
+         }
+      });
    
    });
 }
