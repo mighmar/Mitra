@@ -52,6 +52,21 @@ function globalCellStyleChange(globalHandleCellStyleChange){
   socket.on("cell changed syle",data=>{ globalHandleCellStyleChange(data); });
 }
 
+function visitedSheets(username){
+  alert(username);
+  socket.emit("visited sheets",username);
+
+}
+
+function globalSheetsVisited(globalHandleSheetsVisited){
+  socket.on("sheets visited",data=>{ globalHandleSheetsVisited(data); });
+
+}
+function globalSheetsVisitedUnmount(globalHandleSheetsVisited){
+  socket.removeEventListener("sheets visited");
+
+}
+
 function selectCellUsers(cellCoord){
   socket.emit("select cell",cellCoord);
 }
@@ -63,4 +78,4 @@ function closeSheet(sheetIdCall){
   socket.emit("create sheet",newSheet);
   socket.on("new sheet", sheetId=> sheetIdCall(sheetId));
 }
-export {globalCellStyleChange , cellStyleChange, globalCellValueChange,cellValueChange, addUser,createSheet,openSheet,onUserCellChange,selectCellUsers,globalOpenSheet};
+export {globalSheetsVisitedUnmount,visitedSheets, globalSheetsVisited, globalCellStyleChange , cellStyleChange, globalCellValueChange,cellValueChange, addUser,createSheet,openSheet,onUserCellChange,selectCellUsers,globalOpenSheet};
