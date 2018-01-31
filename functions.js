@@ -19,6 +19,7 @@ function listener(sheetId, target, formula, args) {
             sheet.update({"_id": id}, 
                          {$set: {["cells."+target+".content"]: newValue}})
                .then( () => {
+                  console.log("Cell changing by function");
                   var data = misc.cellToCoords(target);
                   data.value = newValue;
                   io.to(sheetId).emit('cell changed by function', data);

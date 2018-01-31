@@ -64,6 +64,7 @@ function connectSockets(server, db, OID) {
                var collabsSet = {};
                for (v in data.visitors)
                   collabsSet[v] = undefined;
+               delete collabsSet[name];
 
                var collabs = Object.keys(collabsSet); 
                socket.emit('collaborators', collabs);
@@ -222,7 +223,10 @@ function connectSockets(server, db, OID) {
                        
          })
             .then(function () {
-               misc.setFunctionListeners(fun, emitters[socket.sheet], socket.sheet);
+               misc.setFunctionListeners(
+                  fun, emitters[socket.sheet], socket.sheet
+               );
+               emitters[socket.sheet].emit(fun.args[0], sheets, io);
                socket.to(socket.sheet).emit('function set', data);
          })
             .catch(function (err) {
